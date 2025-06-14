@@ -12,10 +12,7 @@
                            x-text="crumb.name">
                         </a>
                         <svg x-show="index < $store.router.generateBreadcrumbs().length - 1"
-                             class="w-4 h-4 text-gray-400"
-                             fill="none"
-                             stroke="currentColor"
-                             viewBox="0 0 24 24">
+                             class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
                     </div>
@@ -24,380 +21,594 @@
         </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-6 py-8">
-        <!-- Page Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                <span x-show="currentCategory" x-text="$store.router.decodeSlug(currentCategory)"></span>
-                <span x-show="currentSearch">Search Results for "<span x-text="currentSearch"></span>"</span>
-                <span x-show="!currentCategory && !currentSearch">All Products</span>
-            </h1>
-            <p class="text-gray-600 text-lg">
-                <span x-text="filteredProducts.length"></span> products found
-            </p>
+    <!-- Page Header -->
+    <div class="bg-white">
+        <div class="max-w-7xl mx-auto px-6 py-12">
+            <div class="text-center max-w-3xl mx-auto">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                    <span x-show="!currentCategory">Our Electronics Collection</span>
+                    <span x-show="currentCategory" x-text="getCategoryName(currentCategory)"></span>
+                    <span x-show="currentSearch">Search Results for "<span x-text="currentSearch"></span>"</span>
+                </h1>
+                <p class="text-xl text-gray-600 font-light leading-relaxed">
+          <span x-show="!currentCategory && !currentSearch">
+            Discover premium consumer electronics, mobile accessories, smart gadgets, and innovative home appliances designed for modern living.
+          </span>
+                    <span x-show="currentCategory || currentSearch">
+            Explore our curated selection of high-quality products.
+          </span>
+                </p>
+            </div>
         </div>
+    </div>
 
-        <div class="flex flex-col lg:flex-row gap-8">
-            <!-- Sidebar Filters -->
-            <div class="lg:w-1/4">
-                <!-- Mobile Filter Toggle -->
-                <button @click="showFilters = !showFilters"
-                        class="lg:hidden w-full bg-white border border-gray-200 px-4 py-3 rounded-lg font-medium text-gray-900 mb-4 flex items-center justify-between">
-                    <span>Filters</span>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
-                    </svg>
-                </button>
+    <!-- Filters & Search -->
+    <div class="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-6 py-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
 
-                <!-- Filter Panel -->
-                <div class="space-y-6" :class="{ 'hidden lg:block': !showFilters }">
-                    <!-- Search Filter -->
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                        <h3 class="font-semibold text-gray-900 mb-4">Search Products</h3>
-                        <div class="relative">
-                            <input type="text"
-                                   x-model="currentSearch"
-                                   @keyup.enter="performSearch()"
-                                   placeholder="Search products..."
-                                   class="w-full px-4 py-2 pr-10 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                            <button @click="performSearch()"
-                                    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-green-600">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                </svg>
-                            </button>
+                <!-- Search & Filters Left Side -->
+                <div class="flex flex-col md:flex-row gap-4 flex-1">
+
+                    <!-- Search Bar -->
+                    <div class="relative flex-1 max-w-md">
+                        <input type="text"
+                               x-model="currentSearch"
+                               @keyup.enter="performSearch()"
+                               placeholder="Search products..."
+                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
                         </div>
+                        <button @click="performSearch()"
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-green-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </button>
                     </div>
 
-                    <!-- Categories Filter -->
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                        <h3 class="font-semibold text-gray-900 mb-4">Categories</h3>
-                        <div class="space-y-2">
-                            <button @click="selectCategory('')"
-                                    :class="currentCategory === '' ? 'text-green-600 font-medium' : 'text-gray-600 hover:text-green-600'"
-                                    class="block w-full text-left py-1 transition-colors">
-                                All Categories
-                            </button>
-                            <template x-for="category in categories" :key="category.id">
-                                <button @click="selectCategory(category.slug || $store.router.encodeSlug(category.name))"
-                                        :class="currentCategory === (category.slug || $store.router.encodeSlug(category.name)) ? 'text-green-600 font-medium' : 'text-gray-600 hover:text-green-600'"
-                                        class="block w-full text-left py-1 transition-colors flex items-center justify-between">
-                                    <span x-text="category.name"></span>
-                                    <span class="text-sm text-gray-400" x-text="category.productCount || ''"></span>
-                                </button>
+                    <!-- Category Filter -->
+                    <div class="relative">
+                        <select x-model="currentCategory"
+                                @change="selectCategory(currentCategory)"
+                                class="appearance-none bg-white border border-gray-300 px-4 py-3 pr-8 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all">
+                            <option value="">All Categories</option>
+                            <template x-for="category in getParentCategories()" :key="category.id">
+                                <option :value="category.slug" x-text="category.name"></option>
                             </template>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
                         </div>
                     </div>
 
-                    <!-- Brands Filter -->
-                    <div x-show="brands.length > 0" class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                        <h3 class="font-semibold text-gray-900 mb-4">Brands</h3>
-                        <div class="space-y-2">
-                            <button @click="selectBrand('')"
-                                    :class="currentBrand === '' ? 'text-green-600 font-medium' : 'text-gray-600 hover:text-green-600'"
-                                    class="block w-full text-left py-1 transition-colors">
-                                All Brands
-                            </button>
+                    <!-- Mobile Filter Toggle -->
+                    <button @click="toggleMobileFilters()"
+                            class="lg:hidden bg-green-600 text-white px-4 py-3 rounded-lg font-medium transition-colors hover:bg-green-700 flex items-center justify-between">
+                        <span x-show="!mobileFiltersOpen">Show Filters</span>
+                        <span x-show="mobileFiltersOpen">Hide Filters</span>
+                        <span x-show="getActiveFiltersCount() > 0"
+                              class="ml-2 bg-white text-green-600 text-xs px-2 py-1 rounded-full font-bold"
+                              x-text="getActiveFiltersCount()"></span>
+                    </button>
+                </div>
+
+                <!-- Sort & View Options -->
+                <div class="flex items-center gap-4">
+
+                    <!-- Sort By -->
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-medium text-gray-700 whitespace-nowrap">Sort by:</label>
+                        <select x-model="sortBy"
+                                @change="filterProducts()"
+                                class="appearance-none bg-white border border-gray-300 px-3 py-2 pr-8 text-sm rounded focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <template x-for="option in sortOptions" :key="option.value">
+                                <option :value="option.value" x-text="option.label"></option>
+                            </template>
+                        </select>
+                    </div>
+
+                    <!-- View Toggle -->
+                    <div class="flex border border-gray-300 rounded overflow-hidden">
+                        <button @click="setViewMode('grid')"
+                                :class="viewMode === 'grid' ? 'bg-green-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'"
+                                class="p-2 transition-colors">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                            </svg>
+                        </button>
+                        <button @click="setViewMode('list')"
+                                :class="viewMode === 'list' ? 'bg-green-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'"
+                                class="p-2 transition-colors">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Filters (Desktop) -->
+            <div class="hidden lg:block mt-6 pt-6 border-t border-gray-200">
+                <div class="flex flex-wrap gap-6">
+
+                    <!-- Brand Filter -->
+                    <div x-show="brands.length > 1" class="flex items-center gap-2">
+                        <span class="text-sm font-medium text-gray-700">Brand:</span>
+                        <select x-model="currentBrand"
+                                @change="selectBrand(currentBrand)"
+                                class="px-3 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-green-500">
+                            <option value="">All Brands</option>
                             <template x-for="brand in brands" :key="brand">
-                                <button @click="selectBrand(brand)"
-                                        :class="currentBrand.toLowerCase() === brand.toLowerCase() ? 'text-green-600 font-medium' : 'text-gray-600 hover:text-green-600'"
-                                        class="block w-full text-left py-1 transition-colors"
-                                        x-text="brand">
-                                </button>
+                                <option :value="brand" x-text="brand"></option>
+                            </template>
+                        </select>
+                    </div>
+
+                    <!-- Price Range Filters -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-medium text-gray-700">Price Range:</span>
+                        <div class="flex flex-wrap gap-2">
+                            <template x-for="range in priceRangeOptions" :key="range.value">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox"
+                                           :value="range.value"
+                                           :checked="priceRanges.includes(range.value)"
+                                           @change="selectPriceRange(range)"
+                                           class="mr-2 text-green-600 focus:ring-green-500 rounded">
+                                    <span class="text-sm" x-text="range.label"></span>
+                                </label>
                             </template>
                         </div>
                     </div>
 
-                    <!-- Price Range Filter -->
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                        <h3 class="font-semibold text-gray-900 mb-4">Price Range</h3>
-                        <div class="space-y-2">
-                            <template x-for="range in priceRanges" :key="range.label">
-                                <button @click="selectPriceRange(range)"
-                                        :class="selectedPriceRange.min === range.min && selectedPriceRange.max === range.max ? 'text-green-600 font-medium' : 'text-gray-600 hover:text-green-600'"
-                                        class="block w-full text-left py-1 transition-colors"
-                                        x-text="range.label">
-                                </button>
-                            </template>
-                        </div>
-
-                        <!-- Custom Price Range -->
-                        <div class="mt-4 pt-4 border-t border-gray-200">
-                            <div class="grid grid-cols-2 gap-2">
-                                <input type="number"
-                                       x-model="selectedPriceRange.min"
-                                       @change="filterProducts()"
-                                       placeholder="Min"
-                                       class="px-3 py-2 border border-gray-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
-                                <input type="number"
-                                       x-model="selectedPriceRange.max"
-                                       @change="filterProducts()"
-                                       placeholder="Max"
-                                       class="px-3 py-2 border border-gray-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
-                            </div>
-                        </div>
+                    <!-- Product Status Filters -->
+                    <div class="flex items-center gap-4">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox"
+                                   x-model="showNew"
+                                   @change="toggleStatusFilter('new')"
+                                   class="mr-2 text-green-600 focus:ring-green-500 rounded">
+                            <span class="text-sm font-medium text-gray-700">New Products</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox"
+                                   x-model="showSale"
+                                   @change="toggleStatusFilter('sale')"
+                                   class="mr-2 text-green-600 focus:ring-green-500 rounded">
+                            <span class="text-sm font-medium text-gray-700">On Sale</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox"
+                                   x-model="inStock"
+                                   @change="toggleStatusFilter('stock')"
+                                   class="mr-2 text-green-600 focus:ring-green-500 rounded">
+                            <span class="text-sm font-medium text-gray-700">In Stock Only</span>
+                        </label>
                     </div>
 
                     <!-- Clear Filters -->
                     <button @click="clearFilters()"
-                            class="w-full bg-gray-100 hover:bg-gray-200 text-gray-900 px-4 py-3 rounded-lg font-medium transition-colors">
+                            x-show="hasActiveFilters()"
+                            class="text-sm text-green-600 hover:text-green-700 underline">
                         Clear All Filters
                     </button>
                 </div>
             </div>
 
-            <!-- Main Content -->
-            <div class="lg:w-3/4">
-                <!-- Toolbar -->
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <!-- Results Info -->
-                        <div class="text-sm text-gray-600">
-                            Showing <span x-text="((currentPage - 1) * itemsPerPage) + 1"></span>-<span x-text="Math.min(currentPage * itemsPerPage, filteredProducts.length)"></span>
-                            of <span x-text="filteredProducts.length"></span> products
-                        </div>
+            <!-- Mobile Filters -->
+            <div x-show="mobileFiltersOpen"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 -translate-y-4"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 -translate-y-4"
+                 class="lg:hidden mt-6 pt-6 border-t border-gray-200 space-y-4">
 
-                        <!-- Controls -->
-                        <div class="flex items-center gap-4">
-                            <!-- Sort -->
-                            <div class="flex items-center gap-2">
-                                <label class="text-sm text-gray-600">Sort by:</label>
-                                <select x-model="sortBy" @change="filterProducts()"
-                                        class="px-3 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
-                                    <option value="name">Name</option>
-                                    <option value="price">Price</option>
-                                    <option value="rating">Rating</option>
-                                    <option value="newest">Newest</option>
-                                </select>
-                                <button @click="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'; filterProducts()"
-                                        class="p-1 text-gray-400 hover:text-gray-600">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              :d="sortOrder === 'asc' ? 'M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12' : 'M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4'"/>
-                                    </svg>
-                                </button>
-                            </div>
-
-                            <!-- View Mode -->
-                            <div class="flex border border-gray-200 rounded overflow-hidden">
-                                <button @click="setViewMode('grid')"
-                                        :class="viewMode === 'grid' ? 'bg-green-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'"
-                                        class="p-2 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-                                    </svg>
-                                </button>
-                                <button @click="setViewMode('list')"
-                                        :class="viewMode === 'list' ? 'bg-green-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'"
-                                        class="p-2 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Mobile Brand Filter -->
+                <div x-show="brands.length > 1">
+                    <h4 class="font-medium text-gray-900 mb-3">Brand</h4>
+                    <select x-model="currentBrand"
+                            @change="selectBrand(currentBrand)"
+                            class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-green-500">
+                        <option value="">All Brands</option>
+                        <template x-for="brand in brands" :key="brand">
+                            <option :value="brand" x-text="brand"></option>
+                        </template>
+                    </select>
                 </div>
 
-                <!-- Loading State -->
-                <div x-show="isLoading" class="text-center py-12">
-                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-                    <p class="mt-2 text-gray-600">Loading products...</p>
-                </div>
-
-                <!-- Products Grid/List -->
-                <div x-show="!isLoading">
-                    <!-- Grid View -->
-                    <div x-show="viewMode === 'grid'"
-                         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <template x-for="product in paginatedProducts" :key="product.id">
-                            <div class="group bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-200 overflow-hidden">
-                                <div class="relative aspect-square overflow-hidden">
-                                    <img :src="product.image"
-                                         :alt="product.name"
-                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-
-                                    <!-- Quick Actions -->
-                                    <div class="absolute top-3 right-3 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button @click="toggleWishlist(product)"
-                                                :class="$store.wishlist.isInWishlist(product.id) ? 'text-red-500' : 'text-gray-400 hover:text-red-500'"
-                                                class="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md transition-colors">
-                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                                <path x-show="!$store.wishlist.isInWishlist(product.id)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                                <path x-show="$store.wishlist.isInWishlist(product.id)" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                                            </svg>
-                                        </button>
-                                        <button @click="$store.ui.shareProduct(product)"
-                                                class="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md text-gray-400 hover:text-green-500 transition-colors">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-
-                                    <!-- Product Badge -->
-                                    <div x-show="product.badge"
-                                         class="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded text-xs font-medium"
-                                         x-text="product.badge">
-                                    </div>
-                                </div>
-
-                                <div class="p-4">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-xs text-green-600 font-medium" x-text="product.category"></span>
-                                        <div class="flex items-center space-x-1">
-                                            <svg class="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                            </svg>
-                                            <span class="text-xs text-gray-600" x-text="product.rating || '4.5'"></span>
-                                        </div>
-                                    </div>
-
-                                    <h3 @click="viewProduct(product)"
-                                        class="font-semibold text-gray-900 mb-2 line-clamp-2 cursor-pointer hover:text-green-600 transition-colors"
-                                        x-text="product.name"></h3>
-
-                                    <div class="flex items-center justify-between mb-3">
-                                        <span class="text-lg font-bold text-gray-900" x-text="$store.ui.formatPrice(product.price)"></span>
-                                        <span x-show="product.originalPrice"
-                                              class="text-sm text-gray-500 line-through"
-                                              x-text="$store.ui.formatPrice(product.originalPrice)"></span>
-                                    </div>
-
-                                    <div class="flex space-x-2">
-                                        <button @click="viewProduct(product)"
-                                                class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-900 px-3 py-2 rounded text-sm font-medium transition-colors">
-                                            View
-                                        </button>
-                                        <button @click="addToCart(product)"
-                                                class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-sm font-medium transition-colors">
-                                            Add to Cart
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                <!-- Mobile Price Filters -->
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-3">Price Range</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <template x-for="range in priceRangeOptions" :key="range.value">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox"
+                                       :value="range.value"
+                                       :checked="priceRanges.includes(range.value)"
+                                       @change="selectPriceRange(range)"
+                                       class="mr-2 text-green-600 focus:ring-green-500 rounded">
+                                <span class="text-sm" x-text="range.label"></span>
+                            </label>
                         </template>
                     </div>
+                </div>
 
-                    <!-- List View -->
-                    <div x-show="viewMode === 'list'" class="space-y-4">
-                        <template x-for="product in paginatedProducts" :key="product.id">
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-                                <div class="flex flex-col md:flex-row gap-6">
-                                    <div class="md:w-48 aspect-square overflow-hidden rounded-lg bg-gray-100">
-                                        <img :src="product.image"
-                                             :alt="product.name"
-                                             class="w-full h-full object-cover">
-                                    </div>
-
-                                    <div class="flex-1">
-                                        <div class="flex items-start justify-between mb-2">
-                                            <div>
-                                                <span class="text-sm text-green-600 font-medium" x-text="product.category"></span>
-                                                <h3 @click="viewProduct(product)"
-                                                    class="text-xl font-semibold text-gray-900 hover:text-green-600 transition-colors cursor-pointer"
-                                                    x-text="product.name"></h3>
-                                            </div>
-                                            <div class="flex items-center space-x-2">
-                                                <button @click="toggleWishlist(product)"
-                                                        :class="$store.wishlist.isInWishlist(product.id) ? 'text-red-500' : 'text-gray-400 hover:text-red-500'"
-                                                        class="p-2 transition-colors">
-                                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path x-show="!$store.wishlist.isInWishlist(product.id)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                                        <path x-show="$store.wishlist.isInWishlist(product.id)" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                                                    </svg>
-                                                </button>
-                                                <button @click="$store.ui.shareProduct(product)"
-                                                        class="p-2 text-gray-400 hover:text-green-500 transition-colors">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <p class="text-gray-600 mb-4 line-clamp-2" x-text="product.description"></p>
-
-                                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                                            <div class="flex items-center space-x-4">
-                                                <div class="flex items-center space-x-2">
-                                                    <span class="text-2xl font-bold text-gray-900" x-text="$store.ui.formatPrice(product.price)"></span>
-                                                    <span x-show="product.originalPrice"
-                                                          class="text-lg text-gray-500 line-through"
-                                                          x-text="$store.ui.formatPrice(product.originalPrice)"></span>
-                                                </div>
-                                                <div class="flex items-center space-x-1">
-                                                    <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                                    </svg>
-                                                    <span class="text-sm text-gray-600" x-text="product.rating || '4.5'"></span>
-                                                </div>
-                                            </div>
-
-                                            <div class="flex space-x-3">
-                                                <button @click="viewProduct(product)"
-                                                        class="bg-gray-100 hover:bg-gray-200 text-gray-900 px-6 py-2 rounded-lg font-medium transition-colors">
-                                                    View Details
-                                                </button>
-                                                <button @click="addToCart(product)"
-                                                        class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                                                    Add to Cart
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-
-                    <!-- No Products Found -->
-                    <div x-show="filteredProducts.length === 0" class="text-center py-12">
-                        <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.034 0-3.892.764-5.291 2.01M6.211 3.89c.34-.34.815-.89 1.789-.89h8a2 2 0 011.789.89L19 5H5l1.211-1.11z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">No products found</h3>
-                        <p class="text-gray-600 mb-6">Try adjusting your filters or search terms to find what you're looking for.</p>
-                        <button @click="clearFilters()"
-                                class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                            Clear Filters
-                        </button>
+                <!-- Mobile Status Filters -->
+                <div>
+                    <h4 class="font-medium text-gray-900 mb-3">Product Status</h4>
+                    <div class="space-y-2">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox"
+                                   x-model="showNew"
+                                   @change="toggleStatusFilter('new')"
+                                   class="mr-2 text-green-600 focus:ring-green-500 rounded">
+                            <span class="text-sm">New Products</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox"
+                                   x-model="showSale"
+                                   @change="toggleStatusFilter('sale')"
+                                   class="mr-2 text-green-600 focus:ring-green-500 rounded">
+                            <span class="text-sm">On Sale</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox"
+                                   x-model="inStock"
+                                   @change="toggleStatusFilter('stock')"
+                                   class="mr-2 text-green-600 focus:ring-green-500 rounded">
+                            <span class="text-sm">In Stock Only</span>
+                        </label>
                     </div>
                 </div>
 
-                <!-- Pagination -->
-                <div x-show="totalPages > 1" class="mt-8 flex justify-center">
-                    <nav class="flex items-center space-x-2">
-                        <button @click="prevPage()"
-                                :disabled="!hasPrevPage"
-                                :class="hasPrevPage ? 'text-gray-700 hover:text-green-600' : 'text-gray-400 cursor-not-allowed'"
-                                class="px-3 py-2 rounded-lg border border-gray-200 transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                            </svg>
-                        </button>
-
-                        <template x-for="page in Array.from({length: totalPages}, (_, i) => i + 1)" :key="page">
-                            <button @click="goToPage(page)"
-                                    :class="page === currentPage ? 'bg-green-600 text-white' : 'text-gray-700 hover:text-green-600 hover:bg-gray-50'"
-                                    class="px-3 py-2 rounded-lg border border-gray-200 transition-colors"
-                                    x-text="page">
-                            </button>
-                        </template>
-
-                        <button @click="nextPage()"
-                                :disabled="!hasNextPage"
-                                :class="hasNextPage ? 'text-gray-700 hover:text-green-600' : 'text-gray-400 cursor-not-allowed'"
-                                class="px-3 py-2 rounded-lg border border-gray-200 transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
-                        </button>
-                    </nav>
-                </div>
+                <button @click="clearFilters()"
+                        class="w-full bg-gray-200 text-gray-700 py-2 px-4 rounded hover:bg-gray-300 transition-colors">
+                    Clear All Filters
+                </button>
             </div>
         </div>
     </div>
+
+    <!-- Products Content -->
+    <div class="max-w-7xl mx-auto px-6 py-8">
+
+        <!-- Results Info & Quick Categories -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+            <div class="flex items-center gap-4">
+                <p class="text-gray-600">
+          <span x-show="!isLoading">
+            <template x-if="resultsInfo.total > 0">
+              <span>
+                Showing <span x-text="resultsInfo.start"></span>-<span x-text="resultsInfo.end"></span>
+                of <span x-text="resultsInfo.total"></span> products
+              </span>
+            </template>
+            <template x-if="resultsInfo.total === 0">
+              <span>No products found</span>
+            </template>
+          </span>
+                    <span x-show="isLoading">Loading products...</span>
+                </p>
+
+                <!-- Active Filters Indicator -->
+                <div x-show="hasActiveFilters()" class="flex items-center gap-2">
+                    <span class="text-sm text-gray-500">Filters active:</span>
+                    <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium"
+                          x-text="getActiveFiltersCount()"></span>
+                </div>
+            </div>
+
+            <!-- Quick Category Links -->
+            <div class="hidden md:flex items-center gap-4">
+                <span class="text-sm text-gray-500">Quick access:</span>
+                <button @click="quickFilterByCategory('mobile-accessories')"
+                        :class="currentCategory === 'mobile-accessories' ? 'text-green-600 font-medium' : 'text-gray-600 hover:text-green-600'"
+                        class="text-sm transition-colors">Mobile</button>
+                <button @click="quickFilterByCategory('smart-gadgets')"
+                        :class="currentCategory === 'smart-gadgets' ? 'text-green-600 font-medium' : 'text-gray-600 hover:text-green-600'"
+                        class="text-sm transition-colors">Smart</button>
+                <button @click="quickFilterByCategory('grooming-tools')"
+                        :class="currentCategory === 'grooming-tools' ? 'text-green-600 font-medium' : 'text-gray-600 hover:text-green-600'"
+                        class="text-sm transition-colors">Grooming</button>
+                <button @click="quickFilterByCategory('home-appliances')"
+                        :class="currentCategory === 'home-appliances' ? 'text-green-600 font-medium' : 'text-gray-600 hover:text-green-600'"
+                        class="text-sm transition-colors">Home</button>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div x-show="isLoading" class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mb-4"></div>
+            <p class="text-gray-600">Loading products...</p>
+        </div>
+
+        <!-- Products Display -->
+        <div x-show="!isLoading && filteredProducts.length > 0">
+
+            <!-- Grid View -->
+            <div x-show="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <template x-for="product in paginatedProducts" :key="product.id">
+                    <div class="bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 group border border-gray-200 overflow-hidden">
+
+                        <!-- Product Image -->
+                        <div class="relative aspect-square overflow-hidden cursor-pointer" @click="viewProduct(product, $event)">
+                            <img :src="Array.isArray(product.images) ? product.images[0] : (product.images || product.image)"
+                                 :alt="product.name + ' - ' + (product.brand || 'GreenLion') + ' electronics'"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                 @error="$event.target.src = 'https://via.placeholder.com/400x400/f3f4f6/9ca3af?text=No+Image'">
+
+                            <!-- Product Badges -->
+                            <div class="absolute top-3 left-3 flex flex-col gap-2">
+                                <span x-show="product.isNew" class="bg-green-500 text-white text-xs px-2 py-1 rounded font-medium">NEW</span>
+                                <span x-show="product.isOnSale || product.salePrice" class="bg-red-500 text-white text-xs px-2 py-1 rounded font-medium">SALE</span>
+                                <span x-show="!isProductInStock(product)" class="bg-gray-500 text-white text-xs px-2 py-1 rounded font-medium">OUT OF STOCK</span>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col gap-2">
+                                <button @click="toggleWishlist(product, $event)"
+                                        :class="$store.wishlist.isInWishlist(product.id) ? 'text-red-500' : 'text-gray-400 hover:text-red-500'"
+                                        class="w-8 h-8 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-colors">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                        <path x-show="!$store.wishlist.isInWishlist(product.id)"
+                                              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                        <path x-show="$store.wishlist.isInWishlist(product.id)"
+                                              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                    </svg>
+                                </button>
+
+                                <button @click="shareProduct(product, $event)"
+                                        class="w-8 h-8 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md text-gray-400 hover:text-green-500 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                                    </svg>
+                                </button>
+
+                                <button @click="inquireAboutProduct(product, $event)"
+                                        class="w-8 h-8 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md text-gray-400 hover:text-green-500 transition-colors">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.688"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Product Info -->
+                        <div class="p-4">
+                            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-green-600 font-medium uppercase"
+                      x-text="product.brand || 'GreenLion'"></span>
+                                <div class="flex items-center space-x-1">
+                                    <svg class="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    <span class="text-xs text-gray-600" x-text="product.rating || '4.5'"></span>
+                                </div>
+                            </div>
+
+                            <h3 @click="viewProduct(product, $event)"
+                                class="font-semibold text-gray-900 mb-2 line-clamp-2 cursor-pointer hover:text-green-600 transition-colors"
+                                x-text="product.name"></h3>
+
+                            <p class="text-sm text-gray-600 mb-3 line-clamp-2" x-text="product.description"></p>
+
+                            <!-- Price -->
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center space-x-2">
+                  <span class="text-lg font-bold text-gray-900"
+                        x-text="formatPrice(getProductPrice(product))"></span>
+                                    <span x-show="product.salePrice && product.base_price && product.base_price !== product.salePrice"
+                                          class="text-sm text-gray-500 line-through"
+                                          x-text="formatPrice(product.base_price)"></span>
+                                </div>
+                                <span x-show="product.salePrice && product.base_price && product.base_price > product.salePrice"
+                                      class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded font-medium"
+                                      x-text="Math.round(((product.base_price - product.salePrice) / product.base_price) * 100) + '% OFF'"></span>
+                            </div>
+
+                            <!-- Stock Info -->
+                            <div class="text-xs text-gray-500 mb-3">
+                <span x-show="isProductInStock(product)"
+                      x-text="getProductStock(product) + ' in stock'"></span>
+                                <span x-show="!isProductInStock(product)"
+                                      class="text-red-500">Out of stock</span>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex space-x-2">
+                                <button @click="viewProduct(product, $event)"
+                                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-900 px-3 py-2 rounded text-sm font-medium transition-colors">
+                                    View
+                                </button>
+                                <button @click="addToCart(product, $event)"
+                                        :disabled="!isProductInStock(product)"
+                                        class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- List View -->
+            <div x-show="viewMode === 'list'" class="space-y-4">
+                <template x-for="product in paginatedProducts" :key="product.id">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300 group overflow-hidden">
+                        <div class="flex flex-col md:flex-row">
+
+                            <!-- Product Image -->
+                            <div class="md:w-48 md:flex-shrink-0">
+                                <div class="relative h-48 md:h-full overflow-hidden cursor-pointer" @click="viewProduct(product, $event)">
+                                    <img :src="Array.isArray(product.images) ? product.images[0] : (product.images || product.image)"
+                                         :alt="product.name + ' - ' + (product.brand || 'GreenLion') + ' electronics'"
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                         @error="$event.target.src = 'https://via.placeholder.com/400x400/f3f4f6/9ca3af?text=No+Image'">
+
+                                    <!-- Badges -->
+                                    <div class="absolute top-2 left-2 flex flex-col gap-1">
+                                        <span x-show="product.isNew" class="bg-green-500 text-white text-xs px-2 py-1 rounded font-medium">NEW</span>
+                                        <span x-show="product.isOnSale || product.salePrice" class="bg-red-500 text-white text-xs px-2 py-1 rounded font-medium">SALE</span>
+                                        <span x-show="!isProductInStock(product)" class="bg-gray-500 text-white text-xs px-2 py-1 rounded font-medium">OUT OF STOCK</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Product Details -->
+                            <div class="flex-1 p-6">
+                                <div class="flex flex-col md:flex-row md:justify-between h-full">
+                                    <div class="flex-1">
+                                        <div class="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1"
+                                             x-text="product.brand || 'GreenLion'"></div>
+                                        <h3 @click="viewProduct(product, $event)"
+                                            class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-green-600 transition-colors cursor-pointer"
+                                            x-text="product.name"></h3>
+                                        <p class="text-gray-600 mb-4 line-clamp-3" x-text="product.description"></p>
+
+                                        <!-- Stock & Rating Info -->
+                                        <div class="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                      <span x-show="isProductInStock(product)"
+                            x-text="getProductStock(product) + ' in stock'"></span>
+                                            <span x-show="!isProductInStock(product)"
+                                                  class="text-red-500">Out of stock</span>
+                                            <div class="flex items-center space-x-1">
+                                                <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                                </svg>
+                                                <span x-text="product.rating || '4.5'"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Price & Actions -->
+                                    <div class="md:ml-6 flex flex-col justify-between items-start md:items-end">
+                                        <div class="mb-4 text-right">
+                                            <div class="text-2xl font-bold text-gray-900"
+                                                 x-text="formatPrice(getProductPrice(product))"></div>
+                                            <div x-show="product.salePrice && product.base_price && product.base_price !== product.salePrice"
+                                                 class="text-gray-500 line-through"
+                                                 x-text="formatPrice(product.base_price)"></div>
+                                            <div x-show="product.salePrice && product.base_price && product.base_price > product.salePrice"
+                                                 class="text-sm text-red-600 font-medium"
+                                                 x-text="Math.round(((product.base_price - product.salePrice) / product.base_price) * 100) + '% OFF'"></div>
+                                        </div>
+
+                                        <div class="flex gap-2">
+                                            <button @click="inquireAboutProduct(product, $event)"
+                                                    class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 text-sm font-medium rounded transition-colors flex items-center gap-2">
+                                                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.688"/>
+                                                </svg>
+                                                WhatsApp
+                                            </button>
+                                            <button @click="viewProduct(product, $event)"
+                                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 text-sm font-medium rounded transition-colors">
+                                                View Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- No Products Found -->
+        <div x-show="!isLoading && filteredProducts.length === 0" class="text-center py-16">
+            <div class="max-w-md mx-auto">
+                <div class="mb-6">
+                    <svg class="h-16 w-16 text-gray-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8V4a1 1 0 00-1-1H6a1 1 0 00-1 1v1"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">No products found</h3>
+                <p class="text-gray-600 mb-6">
+          <span x-show="hasActiveFilters()">
+            Try adjusting your filters or search terms to find what you're looking for.
+          </span>
+                    <span x-show="!hasActiveFilters()">
+            We're working on adding more products to our catalog. Check back soon!
+          </span>
+                </p>
+                <button @click="clearFilters()"
+                        x-show="hasActiveFilters()"
+                        class="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors">
+                    Clear All Filters
+                </button>
+                <button @click="$store.router.navigate('home')"
+                        x-show="!hasActiveFilters()"
+                        class="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors">
+                    Go to Homepage
+                </button>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div x-show="totalPages > 1" class="mt-12 flex justify-center">
+            <nav class="flex items-center space-x-2">
+                <button @click="prevPage()"
+                        :disabled="!hasPrevPage"
+                        :class="hasPrevPage ? 'text-gray-700 hover:text-green-600 hover:bg-gray-50' : 'text-gray-400 cursor-not-allowed'"
+                        class="px-3 py-2 rounded-lg border border-gray-200 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+
+                <template x-for="page in Array.from({length: Math.min(totalPages, 7)}, (_, i) => {
+          if (totalPages <= 7) return i + 1;
+          if (currentPage <= 4) return i + 1;
+          if (currentPage >= totalPages - 3) return totalPages - 6 + i;
+          return currentPage - 3 + i;
+        })" :key="page">
+                    <button @click="goToPage(page)"
+                            :class="page === currentPage ? 'bg-green-600 text-white border-green-600' : 'text-gray-700 hover:text-green-600 hover:bg-gray-50 border-gray-200'"
+                            class="px-3 py-2 rounded-lg border transition-colors font-medium"
+                            x-text="page">
+                    </button>
+                </template>
+
+                <button @click="nextPage()"
+                        :disabled="!hasNextPage"
+                        :class="hasNextPage ? 'text-gray-700 hover:text-green-600 hover:bg-gray-50' : 'text-gray-400 cursor-not-allowed'"
+                        class="px-3 py-2 rounded-lg border border-gray-200 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Newsletter Section -->
+    <section class="bg-gray-100 py-16">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Stay Updated with GreenLion</h2>
+            <p class="text-lg text-gray-600 font-light mb-8">
+                Get the latest updates on new electronics, exclusive deals, and tech innovations delivered to your inbox.
+            </p>
+            <div class="flex flex-col sm:flex-row max-w-md mx-auto gap-4">
+                <input x-ref="newsletterEmail"
+                       type="email"
+                       placeholder="Enter your email address"
+                       @keyup.enter="subscribeToNewsletter()"
+                       class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                <button @click="subscribeToNewsletter()"
+                        class="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors">
+                    Subscribe
+                </button>
+            </div>
+        </div>
+    </section>
 </div>

@@ -3,7 +3,7 @@
 //$componentsDirectory = 'js'; // Relative path within the repository
 $componentsDirectory = 'C:\xampp\htdocs\subdomain-answer-supplement\js'; // Relative path within the repository
 //$componentsDirectory = 'C:\xampp\htdocs\subdomain-answer-supplement\templates\components'; // Relative path within the repository
-//$componentsDirectory = ''; // Relative path within the repository
+$componentsDirectory = ''; // Relative path within the repository
 $outputFile = 'Components_content.txt';
 
 // Files to exclude
@@ -27,6 +27,8 @@ $filteredComponentPaths = array_filter($componentPaths, function($path) use ($ex
 
 // Add additional files manually
 $additionalFiles = [
+    'C:\xampp\htdocs\subdomain-answer-supplement\js\pages\products-page.js',
+    'C:\xampp\htdocs\subdomain-answer-supplement\templates\pages\products-page.html',
 //    'C:\xampp\htdocs\subdomain-answer-supplement\js\components.js',
 //    'C:\xampp\htdocs\subdomain-answer-supplement\index.html',
 ];

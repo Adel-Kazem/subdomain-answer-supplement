@@ -1,29 +1,55 @@
-// pages/products-page.js - Products Page Logic for GreenLion SPA
+// pages/products-page.js - Enhanced Products Page Logic for GreenLion SPA
 document.addEventListener('alpine:init', () => {
     Alpine.data('productsPage', () => ({
+        // Core data
         products: [],
         filteredProducts: [],
         categories: [],
+        brands: [],
+
+        // Filter states
         currentCategory: '',
         currentSearch: '',
         currentBrand: '',
-        priceRange: { min: 0, max: 1000 },
+        priceRanges: [],
         selectedPriceRange: { min: 0, max: 1000 },
-        sortBy: 'name',
+        showNew: false,
+        showSale: false,
+        inStock: false,
+
+        // UI states
+        sortBy: 'featured',
         sortOrder: 'asc',
         viewMode: 'grid',
         currentPage: 1,
         itemsPerPage: 12,
         isLoading: false,
         showFilters: false,
+        mobileFiltersOpen: false,
 
-        brands: [],
-        priceRanges: [
-            { label: 'Under $25', min: 0, max: 25 },
-            { label: '$25 - $50', min: 25, max: 50 },
-            { label: '$50 - $100', min: 50, max: 100 },
-            { label: '$100 - $200', min: 100, max: 200 },
-            { label: 'Over $200', min: 200, max: 1000 }
+        // Pagination
+        totalPages: 0,
+        hasNextPage: false,
+        hasPrevPage: false,
+
+        // Price range options
+        priceRangeOptions: [
+            { label: 'Under $25', value: '0-25', min: 0, max: 25 },
+            { label: '$25 - $50', value: '25-50', min: 25, max: 50 },
+            { label: '$50 - $100', value: '50-100', min: 50, max: 100 },
+            { label: '$100 - $200', value: '100-200', min: 100, max: 200 },
+            { label: 'Over $200', value: '200+', min: 200, max: 1000 }
+        ],
+
+        // Sort options
+        sortOptions: [
+            { value: 'featured', label: 'Featured' },
+            { value: 'name', label: 'Name A-Z' },
+            { value: 'name-desc', label: 'Name Z-A' },
+            { value: 'price-asc', label: 'Price: Low to High' },
+            { value: 'price-desc', label: 'Price: High to Low' },
+            { value: 'rating', label: 'Highest Rated' },
+            { value: 'newest', label: 'Newest First' }
         ],
 
         init() {
@@ -31,12 +57,15 @@ document.addEventListener('alpine:init', () => {
             this.loadCategories();
             this.extractBrands();
             this.watchRouteParams();
+            this.loadViewPreference();
             this.applyInitialFilters();
+            this.updatePageTitle();
         },
 
         watchRouteParams() {
             this.$watch('$store.router.currentParams', () => {
                 this.applyInitialFilters();
+                this.updatePageTitle();
             });
         },
 
@@ -47,6 +76,8 @@ document.addEventListener('alpine:init', () => {
                     this.products = [...PRODUCTS];
                     this.calculatePriceRange();
                     this.filterProducts();
+                } else {
+                    console.warn('PRODUCTS data not available');
                 }
                 this.isLoading = false;
             }, 300);
@@ -55,11 +86,19 @@ document.addEventListener('alpine:init', () => {
         loadCategories() {
             if (typeof CATEGORIES !== 'undefined') {
                 this.categories = [...CATEGORIES];
+            } else {
+                // Create default categories if not available
+                this.categories = [
+                    { id: 1, name: 'Mobile Accessories', slug: 'mobile-accessories', parent_id: null },
+                    { id: 2, name: 'Smart Gadgets', slug: 'smart-gadgets', parent_id: null },
+                    { id: 3, name: 'Grooming Tools', slug: 'grooming-tools', parent_id: null },
+                    { id: 4, name: 'Home Appliances', slug: 'home-appliances', parent_id: null }
+                ];
             }
         },
 
         extractBrands() {
-            const brandSet = new Set();
+            const brandSet = new Set(['GreenLion']); // Default brand
             this.products.forEach(product => {
                 if (product.brand) {
                     brandSet.add(product.brand);
@@ -70,65 +109,172 @@ document.addEventListener('alpine:init', () => {
 
         calculatePriceRange() {
             if (this.products.length > 0) {
-                const prices = this.products.map(p => parseFloat(p.price));
-                this.priceRange.min = Math.floor(Math.min(...prices));
-                this.priceRange.max = Math.ceil(Math.max(...prices));
-                this.selectedPriceRange = { ...this.priceRange };
+                const prices = this.products.map(p => this.getProductPrice(p));
+                const minPrice = Math.floor(Math.min(...prices));
+                const maxPrice = Math.ceil(Math.max(...prices));
+
+                this.selectedPriceRange = {
+                    min: minPrice,
+                    max: maxPrice
+                };
             }
+        },
+
+        getProductPrice(product) {
+            return parseFloat(product.salePrice || product.base_price || product.price || 0);
+        },
+
+        loadViewPreference() {
+            const savedView = localStorage.getItem('greenlion_product_view');
+            if (savedView && ['grid', 'list'].includes(savedView)) {
+                this.viewMode = savedView;
+            }
+        },
+
+        saveViewPreference() {
+            localStorage.setItem('greenlion_product_view', this.viewMode);
+        },
+
+        updatePageTitle() {
+            const params = this.$store.router.getCurrentParams();
+            let title = 'Shop Electronics';
+
+            if (params.category) {
+                const category = this.getCategoryBySlug(params.category);
+                title = category ? category.name : 'Products';
+            } else if (params.search) {
+                title = `Search Results for "${params.search}"`;
+            }
+
+            document.title = `${title} - GreenLion`;
         },
 
         applyInitialFilters() {
             const params = this.$store.router.getCurrentParams();
 
+            // Reset filters
+            this.currentCategory = '';
+            this.currentSearch = '';
+            this.currentBrand = '';
+            this.showNew = false;
+            this.showSale = false;
+            this.inStock = false;
+            this.priceRanges = [];
+
+            // Apply URL parameters
             if (params.category) {
                 this.currentCategory = params.category;
-            } else {
-                this.currentCategory = '';
             }
 
             if (params.search) {
                 this.currentSearch = params.search;
-            } else {
-                this.currentSearch = '';
             }
 
             if (params.brand) {
                 this.currentBrand = params.brand;
-            } else {
-                this.currentBrand = '';
+            }
+
+            if (params.filter) {
+                switch (params.filter) {
+                    case 'new':
+                        this.showNew = true;
+                        break;
+                    case 'sale':
+                        this.showSale = true;
+                        break;
+                    case 'featured':
+                        this.sortBy = 'featured';
+                        break;
+                }
+            }
+
+            if (params.price) {
+                this.priceRanges = params.price.split(',');
+            }
+
+            if (params.sort) {
+                this.sortBy = params.sort;
             }
 
             this.filterProducts();
         },
 
+        // Category management
+        getCategoryBySlug(slug) {
+            return this.categories.find(cat => cat.slug === slug);
+        },
+
+        getCategoryById(id) {
+            return this.categories.find(cat => cat.id === id);
+        },
+
+        getCategoryName(categorySlug) {
+            if (!categorySlug) return 'All Products';
+            const category = this.getCategoryBySlug(categorySlug);
+            return category ? category.name : 'Products';
+        },
+
+        getAllDescendantCategoryIds(parentId) {
+            let ids = [];
+            this.categories.forEach(cat => {
+                if (cat.parent_id === parentId) {
+                    ids.push(cat.id);
+                    ids = ids.concat(this.getAllDescendantCategoryIds(cat.id));
+                }
+            });
+            return ids;
+        },
+
+        getParentCategories() {
+            return this.categories.filter(cat => cat.parent_id === null);
+        },
+
+        // Product filtering logic
         filterProducts() {
             let filtered = [...this.products];
 
-            // Category filter - improved logic
+            // Category filter
             if (this.currentCategory) {
-                filtered = filtered.filter(product => {
-                    if (!product.category) return false;
+                const category = this.getCategoryBySlug(this.currentCategory);
+                if (category) {
+                    const categoryIdsToCheck = [
+                        category.id,
+                        ...this.getAllDescendantCategoryIds(category.id)
+                    ];
 
-                    const productCategorySlug = product.category.toLowerCase().replace(/\s+/g, '-');
+                    filtered = filtered.filter(product => {
+                        // Check if product has categories array
+                        if (Array.isArray(product.categories)) {
+                            return product.categories.some(catId => categoryIdsToCheck.includes(catId));
+                        }
 
-                    return (
-                        productCategorySlug === this.currentCategory ||
-                        product.category.toLowerCase() === this.currentCategory ||
-                        product.category === this.currentCategory
-                    );
-                });
+                        // Fallback: check category string
+                        if (product.category) {
+                            const productCategorySlug = this.$store.router.encodeSlug(product.category);
+                            return categoryIdsToCheck.includes(category.id) ||
+                                productCategorySlug === this.currentCategory ||
+                                product.category.toLowerCase() === category.name.toLowerCase();
+                        }
+
+                        return false;
+                    });
+                }
             }
 
             // Search filter
             if (this.currentSearch) {
                 const searchTerm = this.currentSearch.toLowerCase();
-                filtered = filtered.filter(product =>
-                    product.name.toLowerCase().includes(searchTerm) ||
-                    product.description.toLowerCase().includes(searchTerm) ||
-                    product.category.toLowerCase().includes(searchTerm) ||
-                    (product.brand && product.brand.toLowerCase().includes(searchTerm)) ||
-                    (product.tags && product.tags.some(tag => tag.toLowerCase().includes(searchTerm)))
-                );
+                filtered = filtered.filter(product => {
+                    const searchableText = [
+                        product.name,
+                        product.description,
+                        product.category,
+                        product.brand,
+                        ...(product.tags || [])
+                    ].filter(Boolean).join(' ').toLowerCase();
+
+                    return searchableText.includes(searchTerm);
+                });
             }
 
             // Brand filter
@@ -139,13 +285,43 @@ document.addEventListener('alpine:init', () => {
             }
 
             // Price range filter
-            filtered = filtered.filter(product => {
-                const price = parseFloat(product.price);
-                return price >= this.selectedPriceRange.min && price <= this.selectedPriceRange.max;
-            });
+            if (this.priceRanges.length > 0) {
+                filtered = filtered.filter(product => {
+                    const price = this.getProductPrice(product);
+                    return this.priceRanges.some(range => {
+                        if (range === '200+') {
+                            return price >= 200;
+                        }
+                        const [min, max] = range.split('-').map(Number);
+                        return price >= min && price <= max;
+                    });
+                });
+            }
 
+            // Status filters
+            if (this.showNew) {
+                filtered = filtered.filter(product => product.isNew);
+            }
+
+            if (this.showSale) {
+                filtered = filtered.filter(product => product.isOnSale || product.salePrice);
+            }
+
+            if (this.inStock) {
+                filtered = filtered.filter(product => {
+                    if (product.hasVariants) {
+                        return (product.totalVariantStock || 0) > 0;
+                    }
+                    return (product.stock || 0) > 0;
+                });
+            }
+
+            // Sort products
             this.sortProducts(filtered);
+
+            // Update pagination
             this.currentPage = 1;
+            this.updatePagination();
         },
 
         sortProducts(products) {
@@ -153,31 +329,42 @@ document.addEventListener('alpine:init', () => {
                 let aValue, bValue;
 
                 switch (this.sortBy) {
-                    case 'price':
-                        aValue = parseFloat(a.price);
-                        bValue = parseFloat(b.price);
-                        break;
+                    case 'price-asc':
+                        aValue = this.getProductPrice(a);
+                        bValue = this.getProductPrice(b);
+                        return aValue - bValue;
+
+                    case 'price-desc':
+                        aValue = this.getProductPrice(a);
+                        bValue = this.getProductPrice(b);
+                        return bValue - aValue;
+
                     case 'name':
                         aValue = a.name.toLowerCase();
                         bValue = b.name.toLowerCase();
-                        break;
+                        return aValue.localeCompare(bValue);
+
+                    case 'name-desc':
+                        aValue = a.name.toLowerCase();
+                        bValue = b.name.toLowerCase();
+                        return bValue.localeCompare(aValue);
+
                     case 'rating':
                         aValue = parseFloat(a.rating) || 0;
                         bValue = parseFloat(b.rating) || 0;
-                        break;
-                    case 'newest':
-                        aValue = new Date(a.createdAt || 0);
-                        bValue = new Date(b.createdAt || 0);
-                        break;
-                    default:
-                        aValue = a.name.toLowerCase();
-                        bValue = b.name.toLowerCase();
-                }
+                        return bValue - aValue;
 
-                if (this.sortOrder === 'asc') {
-                    return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-                } else {
-                    return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+                    case 'newest':
+                        aValue = new Date(a.createdAt || a.dateAdded || 0);
+                        bValue = new Date(b.createdAt || b.dateAdded || 0);
+                        return bValue - aValue;
+
+                    case 'featured':
+                    default:
+                        // Featured sorting: featured > new > sale > regular
+                        const aScore = (a.isFeatured ? 1000 : 0) + (a.isNew ? 100 : 0) + (a.isOnSale ? 10 : 0);
+                        const bScore = (b.isFeatured ? 1000 : 0) + (b.isNew ? 100 : 0) + (b.isOnSale ? 10 : 0);
+                        return bScore - aScore;
                 }
             });
 
@@ -185,22 +372,24 @@ document.addEventListener('alpine:init', () => {
         },
 
         // Pagination
+        updatePagination() {
+            this.totalPages = Math.ceil(this.filteredProducts.length / this.itemsPerPage);
+            this.hasNextPage = this.currentPage < this.totalPages;
+            this.hasPrevPage = this.currentPage > 1;
+        },
+
         get paginatedProducts() {
             const start = (this.currentPage - 1) * this.itemsPerPage;
             const end = start + this.itemsPerPage;
             return this.filteredProducts.slice(start, end);
         },
 
-        get totalPages() {
-            return Math.ceil(this.filteredProducts.length / this.itemsPerPage);
-        },
+        get resultsInfo() {
+            const start = ((this.currentPage - 1) * this.itemsPerPage) + 1;
+            const end = Math.min(this.currentPage * this.itemsPerPage, this.filteredProducts.length);
+            const total = this.filteredProducts.length;
 
-        get hasNextPage() {
-            return this.currentPage < this.totalPages;
-        },
-
-        get hasPrevPage() {
-            return this.currentPage > 1;
+            return { start, end, total };
         },
 
         nextPage() {
@@ -229,18 +418,42 @@ document.addEventListener('alpine:init', () => {
         },
 
         // Filter actions
-        selectCategory(category) {
-            this.currentCategory = category;
-            this.$store.router.navigate('products', { category: category });
+        selectCategory(categorySlug) {
+            this.currentCategory = categorySlug;
+            this.updateURL();
+            this.filterProducts();
         },
 
         selectBrand(brand) {
             this.currentBrand = brand;
+            this.updateURL();
             this.filterProducts();
         },
 
         selectPriceRange(range) {
-            this.selectedPriceRange = { min: range.min, max: range.max };
+            const index = this.priceRanges.indexOf(range.value);
+            if (index > -1) {
+                this.priceRanges.splice(index, 1);
+            } else {
+                this.priceRanges.push(range.value);
+            }
+            this.updateURL();
+            this.filterProducts();
+        },
+
+        toggleStatusFilter(filter) {
+            switch (filter) {
+                case 'new':
+                    this.showNew = !this.showNew;
+                    break;
+                case 'sale':
+                    this.showSale = !this.showSale;
+                    break;
+                case 'stock':
+                    this.inStock = !this.inStock;
+                    break;
+            }
+            this.updateURL();
             this.filterProducts();
         },
 
@@ -248,33 +461,148 @@ document.addEventListener('alpine:init', () => {
             this.currentCategory = '';
             this.currentSearch = '';
             this.currentBrand = '';
-            this.selectedPriceRange = { ...this.priceRange };
+            this.priceRanges = [];
+            this.showNew = false;
+            this.showSale = false;
+            this.inStock = false;
+            this.sortBy = 'featured';
+
             this.$store.router.navigate('products');
         },
 
         performSearch() {
             if (this.currentSearch.trim()) {
-                this.$store.router.navigate('products', { search: this.currentSearch });
+                this.updateURL();
+                this.filterProducts();
             } else {
-                this.$store.router.navigate('products');
+                this.currentSearch = '';
+                this.updateURL();
+                this.filterProducts();
             }
         },
 
+        updateURL() {
+            const params = {};
+
+            if (this.currentCategory) params.category = this.currentCategory;
+            if (this.currentSearch) params.search = this.currentSearch;
+            if (this.currentBrand) params.brand = this.currentBrand;
+            if (this.priceRanges.length > 0) params.price = this.priceRanges.join(',');
+            if (this.sortBy !== 'featured') params.sort = this.sortBy;
+
+            // Add status filters
+            const statusFilters = [];
+            if (this.showNew) statusFilters.push('new');
+            if (this.showSale) statusFilters.push('sale');
+            if (this.inStock) statusFilters.push('stock');
+            if (statusFilters.length > 0) params.filter = statusFilters.join(',');
+
+            this.$store.router.navigate('products', params);
+        },
+
+        // View management
         setViewMode(mode) {
             this.viewMode = mode;
+            this.saveViewPreference();
+        },
+
+        toggleMobileFilters() {
+            this.mobileFiltersOpen = !this.mobileFiltersOpen;
         },
 
         // Product actions
-        addToCart(product) {
+        addToCart(product, event) {
+            event?.stopPropagation();
             this.$store.cart.addItem(product);
+            this.$store.ui.showNotification('Product added to cart!', 'success');
         },
 
-        toggleWishlist(product) {
+        toggleWishlist(product, event) {
+            event?.stopPropagation();
             this.$store.wishlist.toggleItem(product);
+            const isInWishlist = this.$store.wishlist.isInWishlist(product.id);
+            this.$store.ui.showNotification(
+                isInWishlist ? 'Added to wishlist!' : 'Removed from wishlist!',
+                'success'
+            );
         },
 
-        viewProduct(product) {
+        viewProduct(product, event) {
+            event?.stopPropagation();
             this.$store.router.navigate('product', { slug: product.slug });
+        },
+
+        shareProduct(product, event) {
+            event?.stopPropagation();
+            this.$store.ui.shareProduct(product);
+        },
+
+        inquireAboutProduct(product, event) {
+            event?.stopPropagation();
+            const message = `Hello! I'm interested in the ${product.name}. Could you provide more information about this product?`;
+            this.$store.ui.openWhatsApp(message);
+        },
+
+        // Utility methods
+        getProductStock(product) {
+            if (product.hasVariants) {
+                return product.totalVariantStock || 0;
+            }
+            return product.stock || 0;
+        },
+
+        isProductInStock(product) {
+            return this.getProductStock(product) > 0;
+        },
+
+        formatPrice(price) {
+            return '$' + parseFloat(price || 0).toFixed(2);
+        },
+
+        hasActiveFilters() {
+            return !!(
+                this.currentCategory ||
+                this.currentSearch ||
+                this.currentBrand ||
+                this.priceRanges.length > 0 ||
+                this.showNew ||
+                this.showSale ||
+                this.inStock
+            );
+        },
+
+        getActiveFiltersCount() {
+            let count = 0;
+            if (this.currentCategory) count++;
+            if (this.currentSearch) count++;
+            if (this.currentBrand) count++;
+            if (this.priceRanges.length > 0) count += this.priceRanges.length;
+            if (this.showNew) count++;
+            if (this.showSale) count++;
+            if (this.inStock) count++;
+            return count;
+        },
+
+        // Quick actions
+        quickFilterByCategory(categorySlug) {
+            this.selectCategory(categorySlug);
+        },
+
+        // Newsletter subscription
+        subscribeToNewsletter() {
+            const email = this.$refs.newsletterEmail?.value;
+            if (email && this.isValidEmail(email)) {
+                // Here you would integrate with your newsletter service
+                this.$store.ui.showNotification('Thank you for subscribing!', 'success');
+                this.$refs.newsletterEmail.value = '';
+            } else {
+                this.$store.ui.showNotification('Please enter a valid email address.', 'error');
+            }
+        },
+
+        isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
         }
     }));
 });

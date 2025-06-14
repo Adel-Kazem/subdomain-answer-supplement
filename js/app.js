@@ -1,7 +1,116 @@
-// app.js - Updated Main Application Controller for GreenLion SPA
+// app.js - Complete Main Application Controller for GreenLion SPA
+// Including Data Helper Functions and All Store Logic
+
+// =============================================================================
+// GLOBAL DATA HELPER FUNCTIONS
+// =============================================================================
+
+window.getProductById = (id) => {
+    if (typeof PRODUCTS === 'undefined') return null;
+    return PRODUCTS.find(product => product.id === id);
+};
+
+window.getProductBySlug = (slug) => {
+    if (typeof PRODUCTS === 'undefined') return null;
+    return PRODUCTS.find(product => product.slug === slug);
+};
+
+window.getProductsByCategory = (category) => {
+    if (typeof PRODUCTS === 'undefined') return [];
+    return PRODUCTS.filter(product => product.category === category);
+};
+
+window.getFeaturedProducts = (limit = 8) => {
+    if (typeof PRODUCTS === 'undefined') return [];
+    return PRODUCTS.filter(product => product.badge).slice(0, limit);
+};
+
+window.searchProducts = (query) => {
+    if (typeof PRODUCTS === 'undefined') return [];
+    const searchTerm = query.toLowerCase();
+    return PRODUCTS.filter(product =>
+        product.name.toLowerCase().includes(searchTerm) ||
+        product.description.toLowerCase().includes(searchTerm) ||
+        product.category.toLowerCase().includes(searchTerm) ||
+        (product.brand && product.brand.toLowerCase().includes(searchTerm)) ||
+        (product.tags && product.tags.some(tag => tag.toLowerCase().includes(searchTerm)))
+    );
+};
+
+window.getProductsByPriceRange = (min, max) => {
+    if (typeof PRODUCTS === 'undefined') return [];
+    return PRODUCTS.filter(product => {
+        const price = parseFloat(product.price);
+        return price >= min && price <= max;
+    });
+};
+
+window.getRelatedProducts = (productId, limit = 4) => {
+    const product = getProductById(productId);
+    if (!product || typeof PRODUCTS === 'undefined') return [];
+
+    return PRODUCTS
+        .filter(p => p.category === product.category && p.id !== productId)
+        .slice(0, limit);
+};
+
+window.getCategoryBySlug = (slug) => {
+    if (typeof CATEGORIES === 'undefined') return null;
+    return CATEGORIES.find(category => category.slug === slug && category.active);
+};
+
+window.getCategoryById = (id) => {
+    if (typeof CATEGORIES === 'undefined') return null;
+    return CATEGORIES.find(category => category.id === id && category.active);
+};
+
+window.getActiveCategories = () => {
+    if (typeof CATEGORIES === 'undefined') return [];
+    return CATEGORIES.filter(category => category.active);
+};
+
+window.getFeaturedCategories = () => {
+    if (typeof CATEGORIES === 'undefined') return [];
+    return CATEGORIES.filter(category => category.active && category.featured);
+};
+
+window.getCategoryNameFromSlug = (slug) => {
+    const category = getCategoryBySlug(slug);
+    return category ? category.name : slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+};
+
+window.extractBrands = () => {
+    if (typeof PRODUCTS === 'undefined') return [];
+    const brandSet = new Set();
+    PRODUCTS.forEach(product => {
+        if (product.brand) {
+            brandSet.add(product.brand);
+        }
+    });
+    return Array.from(brandSet).sort();
+};
+
+window.calculatePriceRange = () => {
+    if (typeof PRODUCTS === 'undefined' || PRODUCTS.length === 0) {
+        return { min: 0, max: 1000 };
+    }
+
+    const prices = PRODUCTS.map(p => parseFloat(p.price));
+    return {
+        min: Math.floor(Math.min(...prices)),
+        max: Math.ceil(Math.max(...prices))
+    };
+};
+
+// =============================================================================
+// ALPINE.JS APPLICATION INITIALIZATION
+// =============================================================================
+
 document.addEventListener('alpine:init', () => {
 
-    // Main App Controller
+    // =========================================================================
+    // MAIN APP CONTROLLER
+    // =========================================================================
     Alpine.data('appController', () => ({
         scrollTop: false,
         isInitialized: false,
@@ -69,7 +178,9 @@ document.addEventListener('alpine:init', () => {
         }
     }));
 
-    // UI Store - Handles global UI state
+    // =========================================================================
+    // UI STORE - HANDLES GLOBAL UI STATE
+    // =========================================================================
     Alpine.store('ui', {
         searchOpen: false,
         searchQuery: '',
@@ -258,7 +369,9 @@ document.addEventListener('alpine:init', () => {
         }
     });
 
-    // Cart Store - Handles shopping cart functionality (keeping existing logic)
+    // =========================================================================
+    // CART STORE - HANDLES SHOPPING CART FUNCTIONALITY
+    // =========================================================================
     Alpine.store('cart', {
         items: [],
         isOpen: false,
@@ -427,6 +540,22 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
+        trackCartView() {
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'view_cart', {
+                    currency: 'USD',
+                    value: this.getTotalPrice(),
+                    items: this.items.map(item => ({
+                        item_id: item.product.id,
+                        item_name: item.product.name,
+                        category: item.product.category,
+                        quantity: item.quantity,
+                        price: item.price
+                    }))
+                });
+            }
+        },
+
         checkoutViaWhatsApp() {
             const summary = this.getCartSummary();
             let message = "🛒 *GreenLion Order Request*\n\n";
@@ -470,7 +599,9 @@ document.addEventListener('alpine:init', () => {
         }
     });
 
-    // Wishlist Store
+    // =========================================================================
+    // WISHLIST STORE - HANDLES WISHLIST FUNCTIONALITY
+    // =========================================================================
     Alpine.store('wishlist', {
         items: [],
 
@@ -546,6 +677,10 @@ document.addEventListener('alpine:init', () => {
         }
     });
 });
+
+// =============================================================================
+// GLOBAL ERROR HANDLERS
+// =============================================================================
 
 // Global error handler
 window.addEventListener('error', (event) => {
