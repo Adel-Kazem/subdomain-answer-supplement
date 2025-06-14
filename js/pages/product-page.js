@@ -17,7 +17,7 @@ document.addEventListener('alpine:init', () => {
         error: null,
 
         // Image Configuration
-        imageBaseUrl: window.location.origin + '/subdomain-answer-supplement/',
+        imageBaseUrl: window.location.origin + '/',
 
         // Image Viewer Properties
         isScrollLeftEnd: true,
