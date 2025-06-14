@@ -84,7 +84,6 @@ document.addEventListener('alpine:init', () => {
             this.isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
         },
 
-        // Product Loading
         loadProduct() {
             this.isLoading = true;
             this.error = null;
@@ -96,7 +95,8 @@ document.addEventListener('alpine:init', () => {
                 return;
             }
 
-            setTimeout(() => {
+            // ✅ Replace setTimeout with $nextTick for immediate loading
+            this.$nextTick(() => {
                 if (typeof PRODUCTS !== 'undefined') {
                     this.product = PRODUCTS.find(p => p.slug === slug);
                     if (this.product) {
@@ -111,8 +111,9 @@ document.addEventListener('alpine:init', () => {
                     this.error = 'Products data not available';
                 }
                 this.isLoading = false;
-            }, 300);
+            });
         },
+
 
         initializeProduct() {
             this.initializeOptions();

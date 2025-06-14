@@ -149,7 +149,7 @@ document.addEventListener('alpine:init', () => {
                     this.processCODOrder();
                 }
                 this.isLoading = false;
-            }, 1000);
+            }, 200);
         },
 
         processWhatsAppOrder() {
@@ -218,7 +218,7 @@ document.addEventListener('alpine:init', () => {
 
             setTimeout(() => {
                 this.$store.router.navigate('home');
-            }, 2000);
+            }, 1000);
         },
 
         continueShopping() {
