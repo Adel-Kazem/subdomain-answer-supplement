@@ -2,21 +2,22 @@
 // Configuration
 //$componentsDirectory = 'js'; // Relative path within the repository
 $componentsDirectory = 'C:\xampp\htdocs\subdomain-answer-supplement\js'; // Relative path within the repository
-$componentsDirectory = 'C:\xampp\htdocs\subdomain-answer-supplement\templates\components'; // Relative path within the repository
+//$componentsDirectory = 'C:\xampp\htdocs\subdomain-answer-supplement\templates\components'; // Relative path within the repository
 //$componentsDirectory = ''; // Relative path within the repository
 $outputFile = 'Components_content.txt';
 
 // Files to exclude
 $excludeFiles = [
-    'products-page.js',
-    'product-page.js',
-    'tailwind.config.js',
-//    'categories.js',
+//    'products-page.js',
+//    'product-page.js',
+//    'tailwind.config.js',
+    'categories.js',
+    'products.js',
     // Add more files to exclude as needed
 ];
 
 // Get all JS files in the directory
-$componentPaths = glob($componentsDirectory . '/*.html');
+$componentPaths = glob($componentsDirectory . '/*.js');
 
 // Filter out excluded files
 $filteredComponentPaths = array_filter($componentPaths, function($path) use ($excludeFiles) {
@@ -26,7 +27,7 @@ $filteredComponentPaths = array_filter($componentPaths, function($path) use ($ex
 
 // Add additional files manually
 $additionalFiles = [
-    'C:\xampp\htdocs\subdomain-answer-supplement\js\components.js',
+//    'C:\xampp\htdocs\subdomain-answer-supplement\js\components.js',
 //    'C:\xampp\htdocs\subdomain-answer-supplement\index.html',
 ];
 
