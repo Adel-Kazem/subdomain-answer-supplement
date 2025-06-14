@@ -1,0 +1,471 @@
+// js/products.js - Product Data for GreenLion Electronics SPA
+const PRODUCTS = [
+    {
+        id: 684649779,
+        name: "Green Lion 40W Dual PD Wall Charger With USB-C To Lightning Cable 1m EU - Black",
+        description: "The Green Lion 40W Dual PD Wall Charger supports fast, reliable charging with two USB-C ports, each that can charge to a maximum of 20W for an aggregate maximum output of 40W. With multiple voltage support — 5V at 3A, 9V at 2.22A, and 12V at 1.66A — combined with advanced PPS technology for optimum power delivery for efficiency and adaptability, this charger is made of flame-retardant PC material that is more durable and safer. The integrated charging protection keeps the devices safe from overcurrent, overheating, and short circuits. A 1-meter USB-C to Lightning cable comes with it, which is compatible with fast-charging Apple devices. The product supports universal compatibility and EU plug, so it's perfect for use at home, in the workplace, or while traveling, providing safe and fast power to any kind of device.",
+        base_price: 13.33,
+        salePrice: null,
+        price: 13.33,
+        base_shipping_cost: 0,
+        free_shipping: true,
+        sku: "GN40EUC2LBK",
+        slug: "green-lion-40w-dual-pd-wall-charger-with-usb-c-to-lightning-cable-1m-eu-black",
+        brand: "Green Lion",
+        rating: 4.5,
+        reviews_count: 12,
+        status: "active",
+        isFeatured: true,
+        isNew: false,
+        isOnSale: false,
+        requiresShipping: true,
+        requiresInventoryTracking: true,
+        stock: 32,
+        hasVariants: false,
+        totalVariantStock: 0,
+        lowStockThreshold: 5,
+        features: {
+            input: "0.5A 100-240V~50-60Hz",
+            usb_c1_c2_output: "DC 5V/3A - DC 9V/2.22A - DC 12V/1.66A",
+            pps: "APD01: 3.3-5.9V/3A, APD02: 3.3-11V/2A",
+            usb_c_usb_c_output: "20W+20W",
+            total_output: "40W(Max)",
+            flame_retardant_pc: "Yes",
+            type_c_port_x2: "Yes",
+            charging_protection: "Yes",
+            universal_compatibility: "Yes"
+        },
+        images: [
+            "https://images.unsplash.com/photo-1583394838336-acd977736f90?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1609592875049-7a6d0b8e6ad3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1585060544812-6b45742d762f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+        ],
+        options: {},
+        option_images: {},
+        variant_images: {},
+        option_variants_stock: {},
+        option_price_adjustments: {},
+        option_shipping_adjustments: {},
+        weight: { value: 0.15, unit: "kg" },
+        dimensions: { length: 8.5, width: 4.2, height: 2.8, unit: "cm" },
+        option_dimension_overrides: {},
+        categories: [466617751], // Mobile Accessories
+        upselling: [],
+        crossSelling: [],
+        relatedProducts: [],
+        createdAt: "2025-05-27T10:28:17.758Z",
+        updatedAt: "2025-06-01T17:46:34.042Z",
+        availability: "in_stock",
+        condition: "new",
+        ean: "",
+        gtin: "09904781905046",
+        keywords: ["charger", "usb-c", "lightning", "fast charging", "wall charger"],
+        metaDescription: "Green Lion 40W Dual PD Wall Charger with USB-C to Lightning cable. Fast, safe charging for all devices.",
+        metaTitle: "Green Lion 40W Dual PD Wall Charger - Fast Charging Solution",
+        returnPolicy: "30-day return policy",
+        warranty: "1 year manufacturer warranty"
+    },
+    {
+        id: 153527202,
+        name: "Green Lion Steam 1800W Garment Steamer - Beige",
+        description: "Green Lion Steam 1800W Garment Steamer utilizes strong and effective wrinkle removal with 1800W rated output and a 35-second quick heat-up time. Built from durable PP and stainless steel, it comes with a detachable 350ml water tank with up to 20 minutes of continuous steam at 32g/min, adjustable at 150°F to 230°F suitable for various fabrics. Its stainless steel sole offers smooth and soft care and anti-dry burning protection for secure use. Light, portable, and easy to maintain, this speaker comes with a 1.7m UK plug cable for comfortable handling. Ideal for clothes freshness and crispness without much effort, it suits home or travel use.",
+        base_price: 35.09,
+        salePrice: 29.99,
+        price: 29.99,
+        base_shipping_cost: 5.99,
+        free_shipping: false,
+        sku: "GNGS1800WBG",
+        slug: "green-lion-steam-1800w-garment-steamer-beige",
+        brand: "Green Lion",
+        rating: 4.2,
+        reviews_count: 8,
+        status: "active",
+        isFeatured: false,
+        isNew: false,
+        isOnSale: true,
+        requiresShipping: true,
+        requiresInventoryTracking: true,
+        stock: 50,
+        hasVariants: false,
+        totalVariantStock: 0,
+        lowStockThreshold: 5,
+        features: {
+            material: "PP + Stainless Steel",
+            rated_power: "1800W",
+            rated_voltage: "220-240V",
+            rated_frequency: "50-60Hz",
+            water_tank_capacity: "350mL",
+            temperature: "150-230° F",
+            steam_output: "32 g/min",
+            fast_heating_time: "35 sec",
+            continuous_steam_time: "20 mins",
+            power_cord: "UK Plug 1.7 m",
+            anti_dry_burning: "Yes",
+            stainless_steel_sole: "Yes",
+            detachable_water_tank: "Yes",
+            easy_to_store: "Yes",
+            gentle_fabric_care: "Yes",
+            compact_lightweight: "Yes"
+        },
+        images: [
+            "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+        ],
+        options: {},
+        option_images: {},
+        variant_images: {},
+        option_variants_stock: {},
+        option_price_adjustments: {},
+        option_shipping_adjustments: {},
+        weight: { value: 1.2, unit: "kg" },
+        dimensions: { length: 28, width: 15, height: 20, unit: "cm" },
+        option_dimension_overrides: {},
+        categories: [20182851], // Home Appliances
+        upselling: [],
+        crossSelling: [],
+        relatedProducts: [],
+        createdAt: "2025-05-27T10:28:20.400Z",
+        updatedAt: "2025-05-27T10:28:20.401Z",
+        availability: "in_stock",
+        condition: "new",
+        ean: "",
+        gtin: "0990478123557",
+        keywords: ["steamer", "garment", "clothes", "iron", "steam"],
+        metaDescription: "Green Lion 1800W Garment Steamer for quick wrinkle removal. Portable and efficient steaming solution.",
+        metaTitle: "Green Lion 1800W Garment Steamer - Professional Clothing Care",
+        returnPolicy: "30-day return policy",
+        warranty: "2 year manufacturer warranty"
+    },
+    {
+        id: 1617805470,
+        name: "Green Lion G-Pro Earbuds 3 - White",
+        description: "Get a smooth audio experience using G-Pro Earbuds 3 from Green Lion, which are meant for comfort, clarity, and ease. The earbuds consist of the GPRO+ chipset and 13mm high-excursion drivers, which provide a sound experience like no other, along with deep bass and brilliant highs. In the case of Bluetooth 5.3, you are able to stay connected up to a range of 25 meters. A sophisticated design promises a nice, comfortable fit, and touch controls pose no problem in music or call management. Five hours of music listening plus a charge extended to up to 20 hours by the charger case make it possible to enjoy the minimum power consumption. The package contains the earbuds, the charging case, and, last but not least, a Type-C to Lightning cable. The G-Pro Earbuds 3 are a perfect match for you whether you are working, traveling, or just relaxing with a product that is styled and has the necessary features for your lifestyle.",
+        base_price: 26.93,
+        salePrice: null,
+        price: 26.93,
+        base_shipping_cost: 0,
+        free_shipping: true,
+        sku: "GNAPOD3GPWH",
+        slug: "green-lion-g-pro-earbuds-3-white",
+        brand: "Green Lion",
+        rating: 4.7,
+        reviews_count: 24,
+        status: "active",
+        isFeatured: true,
+        isNew: true,
+        isOnSale: false,
+        requiresShipping: true,
+        requiresInventoryTracking: true,
+        stock: 16,
+        hasVariants: true,
+        totalVariantStock: 16,
+        lowStockThreshold: 5,
+        features: {
+            chipset: "GPRO+",
+            speaker: "13mm High-Excursion Driver",
+            connectivity: "Bluetooth V5.3",
+            distance: "25m",
+            battery: "Up to 5 Hours with a Single Charge, Up to 20 Hours Work with Charging Case",
+            touch_control: "Yes",
+            comfortable_to_wear: "Yes",
+            type_c_to_lightning_cable: "Included",
+            works_with_magsafe_charging: "Yes"
+        },
+        images: [
+            "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1606841837239-c5a1a4a07af7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+        ],
+        options: {
+            color: ["White", "Black", "Blue"]
+        },
+        option_images: {
+            color: {
+                "White": [
+                    "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                ],
+                "Black": [
+                    "https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                ],
+                "Blue": [
+                    "https://images.unsplash.com/photo-1583394838336-acd977736f90?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                ]
+            }
+        },
+        variant_images: {},
+        option_variants_stock: {
+            "White": 6,
+            "Black": 5,
+            "Blue": 5
+        },
+        option_price_adjustments: {
+            color: {
+                "White": 0,
+                "Black": 2.00,
+                "Blue": 1.00
+            }
+        },
+        option_shipping_adjustments: {},
+        weight: { value: 0.05, unit: "kg" },
+        dimensions: { length: 6, width: 4, height: 2.5, unit: "cm" },
+        option_dimension_overrides: {},
+        categories: [1017426431], // Smart Gadgets
+        upselling: [],
+        crossSelling: [],
+        relatedProducts: [],
+        createdAt: "2025-05-27T10:28:28.550Z",
+        updatedAt: "2025-05-27T10:28:28.550Z",
+        availability: "in_stock",
+        condition: "new",
+        ean: "6935100190228",
+        gtin: "",
+        keywords: ["earbuds", "wireless", "bluetooth", "headphones", "audio"],
+        metaDescription: "Green Lion G-Pro Earbuds 3 with Bluetooth 5.3, 20-hour battery life, and premium sound quality.",
+        metaTitle: "Green Lion G-Pro Earbuds 3 - Premium Wireless Audio Experience",
+        returnPolicy: "30-day return policy",
+        warranty: "1 year manufacturer warranty"
+    },
+    {
+        id: 123456789,
+        name: "Green Lion Wireless Power Bank 20000mAh - Black",
+        description: "Stay powered up anywhere with the Green Lion Wireless Power Bank. Featuring 20000mAh capacity, wireless charging capability, and multiple USB ports for simultaneous charging. Fast charging technology ensures your devices are powered quickly and efficiently. Perfect for travel, work, or daily use.",
+        base_price: 45.99,
+        salePrice: null,
+        price: 45.99,
+        base_shipping_cost: 0,
+        free_shipping: true,
+        sku: "GLWPB20000BK",
+        slug: "green-lion-wireless-power-bank-20000mah-black",
+        brand: "Green Lion",
+        rating: 4.6,
+        reviews_count: 18,
+        status: "active",
+        isFeatured: true,
+        isNew: false,
+        isOnSale: false,
+        requiresShipping: true,
+        requiresInventoryTracking: true,
+        stock: 25,
+        hasVariants: false,
+        totalVariantStock: 0,
+        lowStockThreshold: 5,
+        features: {
+            capacity: "20000mAh",
+            wireless_charging: "Yes",
+            usb_ports: "2 USB-A + 1 USB-C",
+            fast_charging: "18W PD",
+            led_indicator: "Yes",
+            safety_protection: "Overcharge, Overcurrent, Short Circuit",
+            compatibility: "Universal"
+        },
+        images: [
+            "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1583394838336-acd977736f90?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+        ],
+        options: {},
+        option_images: {},
+        variant_images: {},
+        option_variants_stock: {},
+        option_price_adjustments: {},
+        option_shipping_adjustments: {},
+        weight: { value: 0.45, unit: "kg" },
+        dimensions: { length: 16, width: 8, height: 2.2, unit: "cm" },
+        option_dimension_overrides: {},
+        categories: [466617751], // Mobile Accessories
+        upselling: [],
+        crossSelling: [],
+        relatedProducts: [],
+        createdAt: "2025-05-27T10:28:30.000Z",
+        updatedAt: "2025-05-27T10:28:30.000Z",
+        availability: "in_stock",
+        condition: "new",
+        ean: "6935100190235",
+        gtin: "",
+        keywords: ["power bank", "wireless charging", "portable charger", "20000mah", "fast charging"],
+        metaDescription: "Green Lion 20000mAh Wireless Power Bank with fast charging and universal compatibility.",
+        metaTitle: "Green Lion Wireless Power Bank 20000mAh - Portable Charging Solution",
+        returnPolicy: "30-day return policy",
+        warranty: "2 year manufacturer warranty"
+    },
+    {
+        id: 987654321,
+        name: "Green Lion Professional Hair Trimmer Set",
+        description: "Achieve professional grooming results at home with the Green Lion Professional Hair Trimmer Set. Features precision titanium blades, multiple cutting lengths, and ergonomic design for comfortable use. Cordless operation with long-lasting battery life. Complete with various attachments for versatile styling options.",
+        base_price: 65.99,
+        salePrice: 54.99,
+        price: 54.99,
+        base_shipping_cost: 0,
+        free_shipping: true,
+        sku: "GLHT2024PRO",
+        slug: "green-lion-professional-hair-trimmer-set",
+        brand: "Green Lion",
+        rating: 4.4,
+        reviews_count: 15,
+        status: "active",
+        isFeatured: false,
+        isNew: false,
+        isOnSale: true,
+        requiresShipping: true,
+        requiresInventoryTracking: true,
+        stock: 30,
+        hasVariants: false,
+        totalVariantStock: 0,
+        lowStockThreshold: 5,
+        features: {
+            blade_material: "Titanium Coated",
+            cutting_lengths: "0.5mm - 25mm",
+            battery_life: "120 minutes",
+            charging_time: "2 hours",
+            waterproof: "IPX7",
+            attachments: "8 Guide Combs, Cleaning Brush, Oil",
+            motor: "High-Torque"
+        },
+        images: [
+            "https://images.unsplash.com/photo-1503602642458-232111445657?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581404343475-5ac25fe18df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+        ],
+        options: {},
+        option_images: {},
+        variant_images: {},
+        option_variants_stock: {},
+        option_price_adjustments: {},
+        option_shipping_adjustments: {},
+        weight: { value: 0.35, unit: "kg" },
+        dimensions: { length: 18, width: 4.5, height: 4.5, unit: "cm" },
+        option_dimension_overrides: {},
+        categories: [789012345], // Grooming Tools
+        upselling: [],
+        crossSelling: [],
+        relatedProducts: [],
+        createdAt: "2025-05-27T10:28:32.000Z",
+        updatedAt: "2025-05-27T10:28:32.000Z",
+        availability: "in_stock",
+        condition: "new",
+        ean: "6935100190242",
+        gtin: "",
+        keywords: ["hair trimmer", "grooming", "professional", "cordless", "titanium"],
+        metaDescription: "Green Lion Professional Hair Trimmer with titanium blades and 120-minute battery life.",
+        metaTitle: "Green Lion Professional Hair Trimmer Set - Premium Grooming Tool",
+        returnPolicy: "30-day return policy",
+        warranty: "2 year manufacturer warranty"
+    },
+    {
+        id: 456789123,
+        name: "Green Lion Smart Security Camera 1080P WiFi",
+        description: "Keep your home secure with the Green Lion Smart Security Camera. Features full HD 1080P recording, night vision, motion detection, and two-way audio. Easy WiFi setup and mobile app control. Cloud storage and local storage options available. Weather-resistant design for indoor and outdoor use.",
+        base_price: 79.99,
+        salePrice: null,
+        price: 79.99,
+        base_shipping_cost: 0,
+        free_shipping: true,
+        sku: "GLSC1080WIFI",
+        slug: "green-lion-smart-security-camera-1080p-wifi",
+        brand: "Green Lion",
+        rating: 4.3,
+        reviews_count: 22,
+        status: "active",
+        isFeatured: true,
+        isNew: true,
+        isOnSale: false,
+        requiresShipping: true,
+        requiresInventoryTracking: true,
+        stock: 40,
+        hasVariants: true,
+        totalVariantStock: 40,
+        lowStockThreshold: 5,
+        features: {
+            resolution: "1080P Full HD",
+            night_vision: "Infrared Up to 10m",
+            motion_detection: "Smart AI Detection",
+            two_way_audio: "Yes",
+            storage: "Cloud + MicroSD (up to 128GB)",
+            connectivity: "WiFi 802.11 b/g/n",
+            weather_resistance: "IP65",
+            viewing_angle: "110° Wide Angle"
+        },
+        images: [
+            "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1582139329536-e7284fece509?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+        ],
+        options: {
+            package: ["Single Camera", "2-Camera Kit", "4-Camera Kit"]
+        },
+        option_images: {},
+        variant_images: {},
+        option_variants_stock: {
+            "Single Camera": 20,
+            "2-Camera Kit": 12,
+            "4-Camera Kit": 8
+        },
+        option_price_adjustments: {
+            package: {
+                "Single Camera": 0,
+                "2-Camera Kit": 65.00,
+                "4-Camera Kit": 150.00
+            }
+        },
+        option_shipping_adjustments: {},
+        weight: { value: 0.25, unit: "kg" },
+        dimensions: { length: 10, width: 7, height: 7, unit: "cm" },
+        option_dimension_overrides: {},
+        categories: [20182851], // Home Appliances
+        upselling: [],
+        crossSelling: [],
+        relatedProducts: [],
+        createdAt: "2025-05-27T10:28:34.000Z",
+        updatedAt: "2025-05-27T10:28:34.000Z",
+        availability: "in_stock",
+        condition: "new",
+        ean: "6935100190259",
+        gtin: "",
+        keywords: ["security camera", "wifi camera", "1080p", "smart home", "surveillance"],
+        metaDescription: "Green Lion Smart Security Camera with 1080P HD, night vision, and WiFi connectivity.",
+        metaTitle: "Green Lion Smart Security Camera 1080P - Home Security Solution",
+        returnPolicy: "30-day return policy",
+        warranty: "2 year manufacturer warranty"
+    }
+];
+
+// Add computed properties to products after definition
+PRODUCTS.forEach(product => {
+    // Ensure all products have required fields for SPA compatibility
+    if (!product.slug) {
+        product.slug = product.name.toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s_-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    }
+
+    // Ensure price fields are consistent
+    if (!product.price) {
+        product.price = product.salePrice || product.base_price;
+    }
+
+    // Ensure boolean fields exist
+    if (product.isFeatured === undefined) product.isFeatured = false;
+    if (product.isNew === undefined) product.isNew = false;
+    if (product.isOnSale === undefined) product.isOnSale = !!product.salePrice;
+
+    // Ensure weight and dimensions exist
+    if (!product.weight) {
+        product.weight = { value: 0.1, unit: 'kg' };
+    }
+    if (!product.dimensions) {
+        product.dimensions = { length: 10, width: 10, height: 5, unit: 'cm' };
+    }
+
+    // Calculate total variant stock for products with variants
+    if (product.hasVariants && product.option_variants_stock) {
+        product.totalVariantStock = Object.values(product.option_variants_stock)
+            .reduce((sum, stock) => sum + (typeof stock === 'number' ? stock : 0), 0);
+    }
+});
+
+// Make PRODUCTS globally available
+if (typeof window !== 'undefined') {
+    window.PRODUCTS = PRODUCTS;
+}
+
+// Export for module environments
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = PRODUCTS;
+}

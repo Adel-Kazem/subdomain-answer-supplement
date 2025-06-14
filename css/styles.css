@@ -1,0 +1,617 @@
+/* css/styles.css - SPA Styles and Enhancements for GreenLion */
+
+/* ==============================================
+   SPA CORE STYLES
+   ============================================== */
+
+/* Prevent flash of unstyled content */
+[x-cloak] {
+    display: none !important;
+}
+
+/* Main content container transitions */
+#main-content {
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    min-height: 50vh;
+}
+
+/* Loading states */
+.spa-loading {
+    opacity: 0.7;
+    pointer-events: none;
+    position: relative;
+}
+
+.spa-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid #f3f4f6;
+    border-top: 2px solid #065f46;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* ==============================================
+   NAVIGATION ENHANCEMENTS
+   ============================================== */
+
+/* SPA navigation links */
+.spa-link {
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.spa-link:hover {
+    color: #047857; /* primary-hover */
+}
+
+/* Active navigation states */
+.nav-active {
+    color: #065f46 !important; /* primary */
+    border-bottom: 2px solid #065f46 !important;
+    padding-bottom: 0.25rem !important;
+}
+
+/* Mobile menu improvements */
+@media (max-width: 768px) {
+    .spa-link {
+        display: block;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid transparent;
+    }
+
+    .spa-link:hover {
+        border-bottom-color: #065f46;
+    }
+}
+
+/* ==============================================
+   PRODUCT GRID ENHANCEMENTS
+   ============================================== */
+
+/* Product cards */
+.product-card {
+    transition: all 0.3s ease;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+/* Product image containers */
+.product-image-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.product-image-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(6, 95, 70, 0.1) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.product-card:hover .product-image-container::before {
+    opacity: 1;
+}
+
+/* Product badges */
+.product-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 2;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.badge-new {
+    background-color: #10b981;
+    color: white;
+}
+
+.badge-sale {
+    background-color: #ef4444;
+    color: white;
+}
+
+.badge-featured {
+    background-color: #065f46;
+    color: white;
+}
+
+/* ==============================================
+   PRODUCT DETAIL ENHANCEMENTS
+   ============================================== */
+
+/* Image zoom functionality */
+.product-main-image {
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+}
+
+.product-main-image.zoomed {
+    cursor: zoom-out;
+}
+
+/* Thumbnail navigation */
+.thumbnail-container {
+    position: relative;
+}
+
+.thumbnail-scroll {
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.thumbnail-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.thumbnail-nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e5e7eb;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+    cursor: pointer;
+}
+
+.thumbnail-nav-button:hover {
+    background: white;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.thumbnail-nav-button.left {
+    left: 0.5rem;
+}
+
+.thumbnail-nav-button.right {
+    right: 0.5rem;
+}
+
+/* Thumbnail items */
+.thumbnail-item {
+    flex-shrink: 0;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.thumbnail-item:hover {
+    transform: scale(1.05);
+}
+
+.thumbnail-item.active {
+    ring: 2px solid #065f46;
+}
+
+/* ==============================================
+   CART ENHANCEMENTS
+   ============================================== */
+
+/* Cart notifications */
+.cart-notification {
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Cart item cards */
+.cart-item {
+    transition: all 0.3s ease;
+    border-radius: 0.5rem;
+}
+
+.cart-item:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+/* Quantity controls */
+.quantity-control {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    overflow: hidden;
+}
+
+.quantity-button {
+    padding: 0.5rem;
+    background: #f9fafb;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.quantity-button:hover {
+    background: #f3f4f6;
+}
+
+.quantity-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.quantity-input {
+    border: none;
+    outline: none;
+    text-align: center;
+    width: 3rem;
+    padding: 0.5rem 0.25rem;
+    border-left: 1px solid #d1d5db;
+    border-right: 1px solid #d1d5db;
+}
+
+/* ==============================================
+   FILTER ENHANCEMENTS
+   ============================================== */
+
+/* Mobile filters */
+.mobile-filters {
+    transition: all 0.3s ease;
+}
+
+.mobile-filters.open {
+    max-height: 100vh;
+    opacity: 1;
+}
+
+.mobile-filters.closed {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
+/* Filter sections */
+.filter-section {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.filter-section:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+/* ==============================================
+   RESPONSIVE UTILITIES
+   ============================================== */
+
+/* Text clamp utilities */
+.line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+/* Hide scrollbars */
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* ==============================================
+   ANIMATIONS & TRANSITIONS
+   ============================================== */
+
+/* Spin animation for loading indicators */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Slide up animation */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-up {
+    animation: slideUp 0.3s ease-out;
+}
+
+/* Pulse animation for loading states */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ==============================================
+   FLOATING ELEMENTS
+   ============================================== */
+
+/* Floating action buttons */
+.floating-button {
+    position: fixed;
+    border-radius: 50%;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    transition: all 0.3s ease;
+    z-index: 40;
+}
+
+.floating-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+/* WhatsApp button specific */
+.whatsapp-button {
+    background-color: #25d366;
+    color: white;
+}
+
+.whatsapp-button:hover {
+    background-color: #128c7e;
+}
+
+/* Go to top button */
+.go-top-button {
+    background-color: #065f46;
+    color: white;
+}
+
+.go-top-button:hover {
+    background-color: #047857;
+}
+
+/* ==============================================
+   ERROR & EMPTY STATES
+   ============================================== */
+
+/* Empty state containers */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-state-icon {
+    width: 6rem;
+    height: 6rem;
+    margin: 0 auto 2rem;
+    background-color: #f3f4f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-state-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 1rem;
+}
+
+.empty-state-description {
+    color: #6b7280;
+    margin-bottom: 2rem;
+    max-width: 32rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ==============================================
+   UTILITY CLASSES
+   ============================================== */
+
+/* Aspect ratios */
+.aspect-square {
+    aspect-ratio: 1 / 1;
+}
+
+.aspect-video {
+    aspect-ratio: 16 / 9;
+}
+
+.aspect-photo {
+    aspect-ratio: 4 / 3;
+}
+
+/* Background patterns */
+.bg-pattern-dots {
+    background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0);
+    background-size: 20px 20px;
+}
+
+.bg-pattern-grid {
+    background-image:
+            linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* ==============================================
+   PRINT STYLES
+   ============================================== */
+
+@media print {
+    .no-print,
+    .floating-button,
+    .mobile-filters,
+    [x-data*="floatingButtons"] {
+        display: none !important;
+    }
+
+    .spa-link {
+        color: #000 !important;
+        text-decoration: underline;
+    }
+
+    .product-card {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+}
+
+/* ==============================================
+   DARK MODE SUPPORT (Optional)
+   ============================================== */
+
+@media (prefers-color-scheme: dark) {
+    /* Add dark mode styles here if needed */
+    /* This is optional and can be expanded based on requirements */
+}
+
+/* ==============================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================== */
+
+/* Focus visible improvements */
+.spa-link:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid #065f46;
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .spa-link:hover,
+    .nav-active {
+        text-decoration: underline;
+        font-weight: bold;
+    }
+
+    .product-card:hover {
+        border: 2px solid #065f46;
+    }
+}
+
+/* ==============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================== */
+
+/* GPU acceleration for animations */
+.product-card,
+.thumbnail-item,
+.floating-button {
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* Optimize image rendering */
+img {
+    image-rendering: optimizeQuality;
+}
+
+/* ==============================================
+   BROWSER-SPECIFIC FIXES
+   ============================================== */
+
+/* Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+    .floating-button {
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+/* Firefox specific fixes */
+@-moz-document url-prefix() {
+    .thumbnail-scroll {
+        scrollbar-width: thin;
+        scrollbar-color: #d1d5db transparent;
+    }
+}
