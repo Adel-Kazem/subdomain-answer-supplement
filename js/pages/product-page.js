@@ -1,4 +1,4 @@
-// pages/product-page.js - Complete Enhanced Product Detail Page Logic for GreenLion SPA
+// pages/product-page.js - Enhanced Product Detail Page Logic for GreenLion SPA
 document.addEventListener('alpine:init', () => {
     Alpine.data('productPage', () => ({
         // Core Product Data
@@ -45,7 +45,7 @@ document.addEventListener('alpine:init', () => {
                 name: "Ahmad Khalil",
                 avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
                 rating: 5,
-                comment: "Excellent product! Works exactly as described and the build quality is outstanding. Fast shipping and professional packaging.",
+                comment: "Excellent product! Works exactly as described and the build quality is outstanding.",
                 date: "2024-01-15",
                 verified: true
             },
@@ -54,7 +54,7 @@ document.addEventListener('alpine:init', () => {
                 name: "Sara Mahmoud",
                 avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b1e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
                 rating: 5,
-                comment: "Fast delivery and great customer service. Very satisfied with my purchase! The product exceeded my expectations.",
+                comment: "Fast delivery and great customer service. Very satisfied with my purchase!",
                 date: "2024-01-10",
                 verified: true
             },
@@ -63,18 +63,9 @@ document.addEventListener('alpine:init', () => {
                 name: "Omar Hassan",
                 avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
                 rating: 4,
-                comment: "Good quality product, but shipping took a bit longer than expected. Overall satisfied with the purchase.",
+                comment: "Good quality product, but shipping took a bit longer than expected.",
                 date: "2024-01-05",
                 verified: false
-            },
-            {
-                id: 4,
-                name: "Layla Farah",
-                avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-                rating: 5,
-                comment: "Amazing product quality and excellent customer support. Highly recommend GreenLion!",
-                date: "2023-12-28",
-                verified: true
             }
         ],
 
@@ -108,7 +99,6 @@ document.addEventListener('alpine:init', () => {
                 return;
             }
 
-            // Simulate loading delay for better UX
             setTimeout(() => {
                 if (typeof PRODUCTS !== 'undefined') {
                     this.product = PRODUCTS.find(p => p.slug === slug);
@@ -138,12 +128,6 @@ document.addEventListener('alpine:init', () => {
         updatePageMeta() {
             if (this.product) {
                 document.title = `${this.product.name} - GreenLion`;
-
-                // Update meta description if available
-                const metaDescription = document.querySelector('meta[name="description"]');
-                if (metaDescription && this.product.description) {
-                    metaDescription.setAttribute('content', this.product.description.substring(0, 150) + '...');
-                }
             }
         },
 
@@ -187,12 +171,10 @@ document.addEventListener('alpine:init', () => {
         getFullImageUrl(imagePath) {
             if (!imagePath) return this.getPlaceholderImage();
 
-            // If it's already a full URL, return as is
             if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('//')) {
                 return imagePath;
             }
 
-            // Convert relative path to full URL
             return this.imageBaseUrl + imagePath;
         },
 
@@ -202,11 +184,10 @@ document.addEventListener('alpine:init', () => {
 
         // Product Images Management
         get productImages() {
-            if (!this.product) return [];
+            if (!this.product) return [this.getPlaceholderImage()];
 
             let images = [];
 
-            // Add main images
             if (this.product.images) {
                 if (Array.isArray(this.product.images)) {
                     images.push(...this.product.images.map(img => this.getFullImageUrl(img)));
@@ -217,12 +198,10 @@ document.addEventListener('alpine:init', () => {
                 images.push(this.getFullImageUrl(this.product.image));
             }
 
-            // Add gallery images
             if (this.product.gallery && Array.isArray(this.product.gallery)) {
                 images.push(...this.product.gallery.map(img => this.getFullImageUrl(img)));
             }
 
-            // Ensure we have at least one image
             if (images.length === 0) {
                 images.push(this.getPlaceholderImage());
             }
@@ -231,25 +210,26 @@ document.addEventListener('alpine:init', () => {
         },
 
         get allThumbnails() {
+            if (!this.product) return [];
+
             let thumbnails = [];
 
             // Main product images
-            if (this.product?.images && Array.isArray(this.product.images)) {
-                thumbnails.push(...this.product.images.map(img => ({
-                    type: 'main',
-                    image: this.getFullImageUrl(img),
-                    key: img
-                })));
-            } else if (this.product?.image) {
-                thumbnails.push({
-                    type: 'main',
-                    image: this.getFullImageUrl(this.product.image),
-                    key: this.product.image
-                });
-            }
+            const mainImages = this.product.images || (this.product.image ? [this.product.image] : []);
+            const imageArray = Array.isArray(mainImages) ? mainImages : [mainImages];
+
+            imageArray.forEach(img => {
+                if (img) {
+                    thumbnails.push({
+                        type: 'main',
+                        image: this.getFullImageUrl(img),
+                        key: img
+                    });
+                }
+            });
 
             // Option images
-            if (this.product?.option_images) {
+            if (this.product.option_images) {
                 Object.entries(this.product.option_images).forEach(([optionName, optionTypes]) => {
                     Object.entries(optionTypes).forEach(([optionValue, images]) => {
                         if (Array.isArray(images)) {
@@ -268,7 +248,7 @@ document.addEventListener('alpine:init', () => {
             }
 
             // Variant images
-            if (this.product?.variant_images) {
+            if (this.product.variant_images) {
                 Object.entries(this.product.variant_images).forEach(([variantKey, variantImage]) => {
                     if (Array.isArray(variantImage)) {
                         variantImage.forEach(img => {
@@ -279,7 +259,7 @@ document.addEventListener('alpine:init', () => {
                                 variantKey
                             });
                         });
-                    } else {
+                    } else if (variantImage) {
                         thumbnails.push({
                             type: 'variant',
                             image: this.getFullImageUrl(variantImage),
@@ -295,7 +275,7 @@ document.addEventListener('alpine:init', () => {
             const seenImages = new Set();
 
             thumbnails.forEach(thumb => {
-                if (!seenImages.has(thumb.image)) {
+                if (thumb.image && !seenImages.has(thumb.image)) {
                     seenImages.add(thumb.image);
                     uniqueThumbnails.push(thumb);
                 }
@@ -312,11 +292,10 @@ document.addEventListener('alpine:init', () => {
             if (!this.product) return this.getPlaceholderImage();
 
             try {
-                if (this.selectedImage) {
+                if (this.selectedImage && this.selectedImage !== '') {
                     return this.selectedImage;
                 }
 
-                // Check variant images first
                 const variantKey = this.getVariantKey();
                 if (variantKey && this.product.variant_images && this.product.variant_images[variantKey]) {
                     const variantImage = this.product.variant_images[variantKey];
@@ -324,20 +303,20 @@ document.addEventListener('alpine:init', () => {
                     return this.getFullImageUrl(imageUrl);
                 }
 
-                // Check option images
-                if (this.product.option_images) {
+                if (this.product.option_images && this.selectedOptions) {
                     for (const [option, value] of Object.entries(this.selectedOptions)) {
                         if (this.product.option_images[option] &&
                             this.product.option_images[option][value] &&
+                            Array.isArray(this.product.option_images[option][value]) &&
                             this.product.option_images[option][value].length > 0) {
                             return this.getFullImageUrl(this.product.option_images[option][value][0]);
                         }
                     }
                 }
 
-                // Return first main image
-                if (this.productImages.length > 0) {
-                    return this.productImages[0];
+                const mainImages = this.productImages;
+                if (mainImages.length > 0) {
+                    return mainImages[0];
                 }
 
                 return this.getPlaceholderImage();
@@ -348,15 +327,22 @@ document.addEventListener('alpine:init', () => {
         },
 
         selectImage(image) {
+            if (!image) return;
+
             this.selectedImage = image;
             this.resetZoom();
+            this.updateOptionsFromImage(image);
+        },
 
-            // Update selected options based on image
-            if (this.product?.option_images) {
-                for (const [option, values] of Object.entries(this.product.option_images)) {
-                    for (const [value, images] of Object.entries(values)) {
-                        if (images.map(img => this.getFullImageUrl(img)).includes(image)) {
-                            this.selectOption(option, value);
+        updateOptionsFromImage(selectedImage) {
+            if (!this.product?.option_images || !selectedImage) return;
+
+            for (const [optionName, optionValues] of Object.entries(this.product.option_images)) {
+                for (const [optionValue, images] of Object.entries(optionValues)) {
+                    if (Array.isArray(images)) {
+                        const fullImageUrls = images.map(img => this.getFullImageUrl(img));
+                        if (fullImageUrls.includes(selectedImage)) {
+                            this.selectOption(optionName, optionValue);
                             return;
                         }
                     }
@@ -364,13 +350,13 @@ document.addEventListener('alpine:init', () => {
             }
 
             if (this.product?.variant_images) {
-                for (const [key, variantImage] of Object.entries(this.product.variant_images)) {
+                for (const [variantKey, variantImage] of Object.entries(this.product.variant_images)) {
                     const fullUrls = Array.isArray(variantImage) ?
                         variantImage.map(img => this.getFullImageUrl(img)) :
                         [this.getFullImageUrl(variantImage)];
 
-                    if (fullUrls.includes(image)) {
-                        this.selectVariantFromKey(key);
+                    if (fullUrls.includes(selectedImage)) {
+                        this.selectVariantFromKey(variantKey);
                         return;
                     }
                 }
@@ -416,7 +402,6 @@ document.addEventListener('alpine:init', () => {
 
         selectOption(optionName, value) {
             this.selectedOptions[optionName] = value;
-            this.selectedImage = '';
             this.resetZoom();
             this.updateVariantInfo();
             this.$nextTick(() => {
@@ -451,13 +436,12 @@ document.addEventListener('alpine:init', () => {
             return option?.priceModifier ? parseFloat(option.priceModifier) : 0;
         },
 
-        // Pricing Calculations
+        // Pricing
         get finalPrice() {
             if (!this.product) return 0;
 
             let price = this.getVariantPrice();
 
-            // Add option price modifiers
             Object.keys(this.selectedOptions).forEach(optionName => {
                 price += this.getOptionPrice(optionName, this.selectedOptions[optionName]);
             });
@@ -524,14 +508,7 @@ document.addEventListener('alpine:init', () => {
             return 0;
         },
 
-        get stockStatus() {
-            const stock = this.getVariantStock();
-            if (stock <= 0) return { status: 'out-of-stock', message: 'Out of Stock', color: 'text-red-600' };
-            if (stock <= 5) return { status: 'low-stock', message: `Only ${stock} left`, color: 'text-orange-600' };
-            return { status: 'in-stock', message: `${stock} available`, color: 'text-green-600' };
-        },
-
-        // Shipping Calculations
+        // Shipping
         getVariantShippingCost() {
             if (!this.product) return 0;
 
@@ -551,15 +528,6 @@ document.addEventListener('alpine:init', () => {
             }
 
             return Math.max(0, shippingCost);
-        },
-
-        get shippingInfo() {
-            const cost = this.getVariantShippingCost();
-            return {
-                cost: cost,
-                isFree: cost === 0,
-                message: cost === 0 ? 'Free shipping' : `Shipping: ${this.formatPrice(cost)}`
-            };
         },
 
         // Product Specifications
@@ -613,12 +581,6 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
-        updateQuantity(value) {
-            const newQuantity = parseInt(value) || 1;
-            const maxStock = this.getVariantStock();
-            this.quantity = Math.max(1, Math.min(newQuantity, maxStock, 10));
-        },
-
         // Cart Actions
         addToCart() {
             if (!this.product || !this.isVariantInStock()) return;
@@ -630,7 +592,6 @@ document.addEventListener('alpine:init', () => {
                     this.selectedOptions
                 );
 
-                // Show success notification
                 this.$store.ui.showNotification('Product added to cart!', 'success');
             } catch (error) {
                 console.error('Error adding to cart:', error);
@@ -643,7 +604,7 @@ document.addEventListener('alpine:init', () => {
             this.$store.router.navigate('cart');
         },
 
-        // Wishlist Actions
+        // Wishlist
         toggleWishlist() {
             if (!this.product) return;
             this.$store.wishlist.toggleItem(this.product);
@@ -653,7 +614,7 @@ document.addEventListener('alpine:init', () => {
             return this.product && this.$store.wishlist.isInWishlist(this.product.id);
         },
 
-        // Share Functionality
+        // Share
         shareProduct() {
             if (!this.product) return;
 
@@ -664,7 +625,6 @@ document.addEventListener('alpine:init', () => {
                     url: window.location.href
                 });
             } else {
-                // Fallback: Copy to clipboard
                 navigator.clipboard.writeText(window.location.href).then(() => {
                     this.$store.ui.showNotification('Product link copied to clipboard!', 'success');
                 });
@@ -675,39 +635,39 @@ document.addEventListener('alpine:init', () => {
         contactWhatsApp() {
             if (!this.product) return;
 
-            let message = `🛍️ Hello! I'm interested in: *${this.product.name}*\n\n`;
+            let message = `Hello! I'm interested in: ${this.product.name}`;
 
             if (this.quantity > 1) {
-                message += `📦 Quantity: ${this.quantity}\n`;
+                message += ` (Quantity: ${this.quantity})`;
             }
 
-            message += `💰 Price: ${this.formatPrice(this.finalPrice)}\n`;
+            message += `\nPrice: ${this.formatPrice(this.finalPrice)}`;
 
             if (this.selectedOptions && Object.keys(this.selectedOptions).length > 0) {
-                message += '\n🎯 Selected options:\n';
+                message += '\nSelected options:';
                 Object.entries(this.selectedOptions).forEach(([option, value]) => {
-                    message += `• ${this.formatOptionName(option)}: ${value}\n`;
+                    message += `\n- ${this.formatOptionName(option)}: ${value}`;
                 });
             }
 
             const shippingCost = this.getVariantShippingCost();
-            message += `\n🚚 Shipping: ${shippingCost === 0 ? 'Free' : this.formatPrice(shippingCost)}\n`;
+            message += `\nShipping: ${shippingCost === 0 ? 'Free' : this.formatPrice(shippingCost)}`;
 
             const stock = this.getVariantStock();
-            message += `📊 Stock: ${stock > 0 ? `${stock} available` : 'Out of stock'}\n`;
+            message += `\nStock: ${stock > 0 ? `${stock} available` : 'Out of stock'}`;
 
             if (this.totalPrice !== this.finalPrice) {
-                message += `\n💳 Total: ${this.formatPrice(this.totalPrice)}\n`;
+                message += `\nTotal: ${this.formatPrice(this.totalPrice)}`;
             }
 
-            message += '\n❓ Could you provide me with more information about this product?';
+            message += '\n\nCould you provide me with more information about this product?';
 
-            const phoneNumber = '96171123456'; // Replace with your WhatsApp number
+            const phoneNumber = '96171123456';
             const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
         },
 
-        // Image Modal Functions
+        // Image Modal
         openImageModal() {
             this.showImageModal = true;
             document.body.style.overflow = 'hidden';
@@ -751,7 +711,6 @@ document.addEventListener('alpine:init', () => {
             this.$nextTick(() => {
                 let thumbnailSelector = null;
 
-                // Find thumbnail for current options
                 for (const [option, value] of Object.entries(this.selectedOptions)) {
                     if (this.product.option_images &&
                         this.product.option_images[option] &&
@@ -815,7 +774,6 @@ document.addEventListener('alpine:init', () => {
 
             const now = Date.now();
             if (now - this.lastTap < 300) {
-                // Double tap to zoom
                 this.zoomed = !this.zoomed;
                 if (this.zoomed) {
                     const img = this.$refs.mainImage;
@@ -836,7 +794,6 @@ document.addEventListener('alpine:init', () => {
                 }
                 e.preventDefault();
             } else if (this.zoomed) {
-                // Start panning
                 this.dragging = true;
                 this.dragStartX = e.touches[0].clientX - this.panX;
                 this.dragStartY = e.touches[0].clientY - this.panY;
@@ -854,7 +811,6 @@ document.addEventListener('alpine:init', () => {
             this.panX = touchX - this.dragStartX;
             this.panY = touchY - this.dragStartY;
 
-            // Constrain panning within bounds
             this.panX = Math.max(this.minPanX, Math.min(this.maxPanX, this.panX));
             this.panY = Math.max(this.minPanY, Math.min(this.maxPanY, this.panY));
 
@@ -906,7 +862,7 @@ document.addEventListener('alpine:init', () => {
             event.target.src = this.getPlaceholderImage();
         },
 
-        // Reviews System
+        // Reviews
         get averageRating() {
             if (this.reviews.length === 0) return 0;
             const sum = this.reviews.reduce((acc, review) => acc + review.rating, 0);
@@ -953,47 +909,6 @@ document.addEventListener('alpine:init', () => {
 
         formatFeatureKey(key) {
             return key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
-        },
-
-        formatVariantName(variant) {
-            return variant
-                .split('|')
-                .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-                .join(' + ');
-        },
-
-        // Tab Management
-        switchTab(tab) {
-            this.activeTab = tab;
-        },
-
-        // Debugging Functions
-        debugImages() {
-            if (this.product) {
-                console.log('Product:', this.product);
-                console.log('Product images:', this.product.images);
-                console.log('Processed images:', this.productImages);
-                console.log('All thumbnails:', this.allThumbnails);
-                console.log('Image base URL:', this.imageBaseUrl);
-                console.log('Selected image:', this.getSelectedImage());
-                console.log('Selected options:', this.selectedOptions);
-            }
-        },
-
-        debugPricing() {
-            console.log('Base price:', this.product?.base_price || this.product?.price);
-            console.log('Variant price:', this.getVariantPrice());
-            console.log('Final price:', this.finalPrice);
-            console.log('Total price:', this.totalPrice);
-            console.log('Selected options:', this.selectedOptions);
-        },
-
-        debugStock() {
-            console.log('Has variants:', this.product?.hasVariants);
-            console.log('Variant key:', this.getVariantKey());
-            console.log('Variant stock:', this.getVariantStock());
-            console.log('Is in stock:', this.isVariantInStock());
-            console.log('Stock status:', this.stockStatus);
         }
     }));
 });
