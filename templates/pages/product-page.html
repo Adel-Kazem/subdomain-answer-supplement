@@ -522,8 +522,10 @@
                 <template x-for="(relatedProduct, relatedIndex) in relatedProducts" :key="'related-' + relatedIndex">
                     <div class="group bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 overflow-hidden">
                         <div class="relative aspect-square overflow-hidden">
-                            <img :src="relatedProduct.image" :alt="relatedProduct.name"
-                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            <img :src="getFullImageUrl(relatedProduct.image || relatedProduct.images?.[0])"
+                                 :alt="relatedProduct.name"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                 @error="handleImageError">
                             <button @click="$store.router.navigate('product', { slug: relatedProduct.slug })"
                                     class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
                                 <span class="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">

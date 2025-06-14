@@ -27,8 +27,8 @@ $filteredComponentPaths = array_filter($componentPaths, function($path) use ($ex
 
 // Add additional files manually
 $additionalFiles = [
-    'C:\xampp\htdocs\subdomain-answer-supplement\js\pages\products-page.js',
-    'C:\xampp\htdocs\subdomain-answer-supplement\templates\pages\products-page.html',
+    'C:\xampp\htdocs\subdomain-answer-supplement\js\pages\product-page.js',
+    'C:\xampp\htdocs\subdomain-answer-supplement\templates\pages\product-page.html',
 //    'C:\xampp\htdocs\subdomain-answer-supplement\js\components.js',
 //    'C:\xampp\htdocs\subdomain-answer-supplement\index.html',
 ];
