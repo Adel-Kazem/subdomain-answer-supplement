@@ -99,9 +99,10 @@
                 <template x-for="product in featuredProducts" :key="product.id">
                     <div class="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
                         <div class="relative overflow-hidden rounded-t-2xl">
-                            <img :src="product.image"
+                            <img :src="getProductImage(product)"
                                  :alt="product.name"
-                                 class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500">
+                                 class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                                 @error="handleImageError">
 
                             <!-- Product Badge -->
                             <div x-show="product.badge"
@@ -144,10 +145,10 @@
 
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-2xl font-bold text-gray-900" x-text="$store.ui.formatPrice(product.price)"></span>
+                                    <span class="text-2xl font-bold text-gray-900" x-text="formatPrice(getProductPrice(product))"></span>
                                     <span x-show="product.originalPrice"
                                           class="text-sm text-gray-500 line-through"
-                                          x-text="$store.ui.formatPrice(product.originalPrice)"></span>
+                                          x-text="formatPrice(product.originalPrice)"></span>
                                 </div>
                             </div>
 
@@ -196,9 +197,10 @@
                     <div @click="$store.router.navigate('products', { category: category.slug })"
                          class="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer overflow-hidden">
                         <div class="relative h-48 overflow-hidden">
-                            <img :src="category.image"
+                            <img :src="getCategoryImage(category)"
                                  :alt="category.name"
-                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                 @error="handleImageError">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                             <div class="absolute bottom-4 left-4 text-white">
                                 <h3 class="text-xl font-bold mb-1" x-text="category.name"></h3>
