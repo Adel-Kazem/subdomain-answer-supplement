@@ -292,8 +292,9 @@ document.addEventListener('alpine:init', () => {
             if (!this.product) return this.getPlaceholderImage();
 
             try {
+                // ✅ FIXED: Always process through getFullImageUrl()
                 if (this.selectedImage && this.selectedImage !== '') {
-                    return this.selectedImage;
+                    return this.getFullImageUrl(this.selectedImage);
                 }
 
                 const variantKey = this.getVariantKey();
