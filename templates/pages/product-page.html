@@ -57,19 +57,19 @@
                 <!-- Main Image -->
                 <div class="aspect-square bg-white rounded-2xl overflow-hidden shadow-lg">
                     <img :src="productImages[selectedImageIndex]"
-                         :alt="product?.name"
+                         :alt="product?.name || 'Product'"
                          @click="openImageModal()"
                          class="w-full h-full object-cover cursor-zoom-in hover:scale-105 transition-transform duration-300">
                 </div>
 
                 <!-- Image Thumbnails -->
                 <div x-show="productImages.length > 1" class="flex space-x-3 overflow-x-auto pb-2">
-                    <template x-for="(image, index) in productImages" :key="index">
+                    <template x-for="(image, index) in productImages" :key="'image-' + index">
                         <button @click="selectImage(index)"
                                 :class="selectedImageIndex === index ? 'ring-2 ring-green-500' : 'ring-1 ring-gray-200'"
                                 class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden transition-all">
                             <img :src="image"
-                                 :alt="product?.name"
+                                 :alt="product?.name || 'Product'"
                                  class="w-full h-full object-cover">
                         </button>
                     </template>
@@ -81,14 +81,14 @@
                 <!-- Category & Brand -->
                 <div class="flex items-center justify-between">
                     <span class="inline-block bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full"
-                          x-text="product?.category"></span>
+                          x-text="product?.category || ''"></span>
                     <div class="flex items-center space-x-2">
                         <button @click="toggleWishlist()"
-                                :class="$store.wishlist.isInWishlist(product?.id) ? 'text-red-500' : 'text-gray-400 hover:text-red-500'"
+                                :class="product && $store.wishlist.isInWishlist(product.id) ? 'text-red-500' : 'text-gray-400 hover:text-red-500'"
                                 class="p-2 rounded-full hover:bg-gray-100 transition-colors">
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path x-show="!$store.wishlist.isInWishlist(product?.id)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                <path x-show="$store.wishlist.isInWishlist(product?.id)" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                <path x-show="!product || !$store.wishlist.isInWishlist(product.id)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                <path x-show="product && $store.wishlist.isInWishlist(product.id)" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                             </svg>
                         </button>
                         <button @click="shareProduct()"
@@ -101,52 +101,52 @@
                 </div>
 
                 <!-- Product Name -->
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-900" x-text="product?.name"></h1>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900" x-text="product?.name || ''"></h1>
 
                 <!-- Rating & Reviews -->
                 <div class="flex items-center space-x-4">
                     <div class="flex items-center space-x-1">
-                        <template x-for="i in 5" :key="i">
-                            <svg :class="i <= Math.floor(averageRating) ? 'text-yellow-400' : 'text-gray-300'"
+                        <template x-for="i in 5" :key="'star-' + i">
+                            <svg :class="i <= Math.floor(averageRating || 0) ? 'text-yellow-400' : 'text-gray-300'"
                                  class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                             </svg>
                         </template>
                     </div>
-                    <span class="text-lg font-medium text-gray-900" x-text="averageRating"></span>
-                    <span class="text-gray-600">(<span x-text="reviews.length"></span> reviews)</span>
+                    <span class="text-lg font-medium text-gray-900" x-text="averageRating || '0'"></span>
+                    <span class="text-gray-600">(<span x-text="reviews.length || 0"></span> reviews)</span>
                 </div>
 
                 <!-- Price -->
                 <div class="space-y-2">
                     <div class="flex items-baseline space-x-3">
-                        <span class="text-4xl font-bold text-gray-900" x-text="$store.ui.formatPrice(finalPrice)"></span>
+                        <span class="text-4xl font-bold text-gray-900" x-text="finalPrice ? $store.ui.formatPrice(finalPrice) : ''"></span>
                         <span x-show="product?.originalPrice && product.originalPrice > finalPrice"
                               class="text-xl text-gray-500 line-through"
-                              x-text="$store.ui.formatPrice(product.originalPrice)"></span>
+                              x-text="product?.originalPrice && finalPrice ? $store.ui.formatPrice(product.originalPrice) : ''"></span>
                         <span x-show="product?.originalPrice && product.originalPrice > finalPrice"
                               class="inline-block bg-red-100 text-red-800 text-sm font-medium px-2 py-1 rounded"
-                              x-text="Math.round(((product.originalPrice - finalPrice) / product.originalPrice) * 100) + '% OFF'"></span>
+                              x-text="product?.originalPrice && finalPrice ? Math.round(((product.originalPrice - finalPrice) / product.originalPrice) * 100) + '% OFF' : ''"></span>
                     </div>
                     <p class="text-sm text-gray-600">Price includes VAT</p>
                 </div>
 
                 <!-- Product Options -->
                 <div x-show="product?.options && Object.keys(product.options).length > 0" class="space-y-4">
-                    <template x-for="[optionName, optionValues] in Object.entries(product?.options || {})" :key="optionName">
+                    <template x-for="([optionName, optionValues], optionIndex) in Object.entries(product?.options || {})" :key="'option-' + optionIndex">
                         <div class="space-y-2">
                             <label class="block text-sm font-medium text-gray-900 capitalize" x-text="optionName"></label>
                             <div class="flex flex-wrap gap-2">
-                                <template x-for="option in optionValues" :key="typeof option === 'object' ? option.value : option">
+                                <template x-for="(option, valueIndex) in (optionValues || [])" :key="'value-' + optionIndex + '-' + valueIndex">
                                     <button @click="selectOption(optionName, typeof option === 'object' ? option.value : option)"
                                             :class="selectedOptions[optionName] === (typeof option === 'object' ? option.value : option)
                                                    ? 'bg-green-600 text-white border-green-600'
                                                    : 'bg-white text-gray-900 border-gray-200 hover:border-green-300'"
                                             class="px-4 py-2 border rounded-lg font-medium transition-colors">
-                                        <span x-text="typeof option === 'object' ? option.label || option.value : option"></span>
+                                        <span x-text="typeof option === 'object' ? (option.label || option.value) : option"></span>
                                         <span x-show="typeof option === 'object' && option.priceModifier"
                                               class="ml-1 text-sm"
-                                              x-text="(option.priceModifier > 0 ? '+' : '') + $store.ui.formatPrice(option.priceModifier)"></span>
+                                              x-text="typeof option === 'object' && option.priceModifier ? ((option.priceModifier > 0 ? '+' : '') + $store.ui.formatPrice(option.priceModifier)) : ''"></span>
                                     </button>
                                 </template>
                             </div>
@@ -165,7 +165,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
                             </svg>
                         </button>
-                        <span class="text-xl font-semibold text-gray-900 w-12 text-center" x-text="quantity"></span>
+                        <span class="text-xl font-semibold text-gray-900 w-12 text-center" x-text="quantity || 1"></span>
                         <button @click="incrementQuantity()"
                                 :disabled="quantity >= 10"
                                 class="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
@@ -180,7 +180,7 @@
                 <div x-show="quantity > 1" class="bg-gray-50 p-4 rounded-lg">
                     <div class="flex justify-between items-center">
                         <span class="text-lg font-medium text-gray-900">Total:</span>
-                        <span class="text-2xl font-bold text-green-600" x-text="$store.ui.formatPrice(totalPrice)"></span>
+                        <span class="text-2xl font-bold text-green-600" x-text="totalPrice ? $store.ui.formatPrice(totalPrice) : ''"></span>
                     </div>
                 </div>
 
@@ -188,7 +188,7 @@
                 <div class="space-y-3">
                     <button @click="addToCart()"
                             class="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-6 rounded-lg text-lg font-semibold transition-colors transform hover:scale-[1.02] active:scale-[0.98]">
-                        Add to Cart - <span x-text="$store.ui.formatPrice(totalPrice)"></span>
+                        Add to Cart - <span x-text="totalPrice ? $store.ui.formatPrice(totalPrice) : ''"></span>
                     </button>
                     <button @click="buyNow()"
                             class="w-full bg-gray-900 hover:bg-gray-800 text-white py-4 px-6 rounded-lg text-lg font-semibold transition-colors transform hover:scale-[1.02] active:scale-[0.98]">
@@ -254,7 +254,7 @@
                     <button @click="activeTab = 'reviews'"
                             :class="activeTab === 'reviews' ? 'border-green-600 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700'"
                             class="py-4 px-6 border-b-2 font-medium text-sm transition-colors">
-                        Reviews (<span x-text="reviews.length"></span>)
+                        Reviews (<span x-text="reviews.length || 0"></span>)
                     </button>
                 </nav>
             </div>
@@ -263,13 +263,13 @@
             <div class="p-8">
                 <!-- Description Tab -->
                 <div x-show="activeTab === 'description'" class="prose max-w-none">
-                    <p class="text-gray-700 leading-relaxed text-lg" x-text="product?.description"></p>
+                    <p class="text-gray-700 leading-relaxed text-lg" x-text="product?.description || ''"></p>
 
                     <!-- Additional Features -->
-                    <div x-show="product?.features" class="mt-8">
+                    <div x-show="product?.features && product.features.length > 0" class="mt-8">
                         <h3 class="text-xl font-semibold text-gray-900 mb-4">Key Features</h3>
                         <ul class="space-y-2">
-                            <template x-for="feature in (product?.features || [])" :key="feature">
+                            <template x-for="(feature, featureIndex) in (product?.features || [])" :key="'feature-' + featureIndex">
                                 <li class="flex items-start space-x-2">
                                     <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -283,15 +283,15 @@
 
                 <!-- Specifications Tab -->
                 <div x-show="activeTab === 'specifications'">
-                    <div x-show="product?.specifications" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <template x-for="[key, value] in Object.entries(product?.specifications || {})" :key="key">
+                    <div x-show="product?.specifications && Object.keys(product.specifications).length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <template x-for="([key, value], specIndex) in Object.entries(product?.specifications || {})" :key="'spec-' + specIndex">
                             <div class="flex justify-between py-3 border-b border-gray-100">
                                 <span class="font-medium text-gray-900 capitalize" x-text="key.replace(/([A-Z])/g, ' $1').trim()"></span>
                                 <span class="text-gray-700" x-text="value"></span>
                             </div>
                         </template>
                     </div>
-                    <div x-show="!product?.specifications" class="text-center py-8 text-gray-500">
+                    <div x-show="!product?.specifications || Object.keys(product?.specifications || {}).length === 0" class="text-center py-8 text-gray-500">
                         No specifications available for this product.
                     </div>
                 </div>
@@ -302,28 +302,28 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <!-- Average Rating -->
                         <div class="text-center">
-                            <div class="text-6xl font-bold text-gray-900 mb-2" x-text="averageRating"></div>
+                            <div class="text-6xl font-bold text-gray-900 mb-2" x-text="averageRating || '0'"></div>
                             <div class="flex items-center justify-center space-x-1 mb-2">
-                                <template x-for="i in 5" :key="i">
-                                    <svg :class="i <= Math.floor(averageRating) ? 'text-yellow-400' : 'text-gray-300'"
+                                <template x-for="i in 5" :key="'review-star-' + i">
+                                    <svg :class="i <= Math.floor(averageRating || 0) ? 'text-yellow-400' : 'text-gray-300'"
                                          class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                     </svg>
                                 </template>
                             </div>
-                            <p class="text-gray-600">Based on <span x-text="reviews.length"></span> reviews</p>
+                            <p class="text-gray-600">Based on <span x-text="reviews.length || 0"></span> reviews</p>
                         </div>
 
                         <!-- Rating Distribution -->
                         <div class="space-y-2">
-                            <template x-for="rating in [5, 4, 3, 2, 1]" :key="rating">
+                            <template x-for="rating in [5, 4, 3, 2, 1]" :key="'rating-' + rating">
                                 <div class="flex items-center space-x-2">
                                     <span class="text-sm text-gray-600 w-8" x-text="rating + ' ★'"></span>
                                     <div class="flex-1 bg-gray-200 rounded-full h-2">
                                         <div class="bg-yellow-400 h-2 rounded-full transition-all duration-300"
-                                             :style="'width: ' + ratingDistribution[rating] + '%'"></div>
+                                             :style="'width: ' + (ratingDistribution ? ratingDistribution[rating] || 0 : 0) + '%'"></div>
                                     </div>
-                                    <span class="text-sm text-gray-600 w-8" x-text="ratingDistribution[rating] + '%'"></span>
+                                    <span class="text-sm text-gray-600 w-8" x-text="(ratingDistribution ? ratingDistribution[rating] || 0 : 0) + '%'"></span>
                                 </div>
                             </template>
                         </div>
@@ -331,7 +331,7 @@
 
                     <!-- Individual Reviews -->
                     <div class="space-y-6">
-                        <template x-for="review in reviews" :key="review.id">
+                        <template x-for="(review, reviewIndex) in reviews" :key="'review-' + reviewIndex">
                             <div class="border-b border-gray-200 pb-6">
                                 <div class="flex items-start space-x-4">
                                     <img :src="review.avatar"
@@ -346,16 +346,16 @@
                                         </div>
                                         <div class="flex items-center space-x-2 mb-2">
                                             <div class="flex space-x-1">
-                                                <template x-for="i in 5" :key="i">
-                                                    <svg :class="i <= review.rating ? 'text-yellow-400' : 'text-gray-300'"
+                                                <template x-for="i in 5" :key="'review-rating-' + reviewIndex + '-' + i">
+                                                    <svg :class="i <= (review.rating || 0) ? 'text-yellow-400' : 'text-gray-300'"
                                                          class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                                     </svg>
                                                 </template>
                                             </div>
-                                            <span class="text-sm text-gray-600" x-text="formatDate(review.date)"></span>
+                                            <span class="text-sm text-gray-600" x-text="review.date ? formatDate(review.date) : ''"></span>
                                         </div>
-                                        <p class="text-gray-700 leading-relaxed" x-text="review.comment"></p>
+                                        <p class="text-gray-700 leading-relaxed" x-text="review.comment || ''"></p>
                                     </div>
                                 </div>
                             </div>
@@ -369,7 +369,7 @@
         <div x-show="relatedProducts.length > 0" class="mb-16">
             <h2 class="text-3xl font-bold text-gray-900 mb-8">Related Products</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <template x-for="relatedProduct in relatedProducts" :key="relatedProduct.id">
+                <template x-for="(relatedProduct, relatedIndex) in relatedProducts" :key="'related-' + relatedIndex">
                     <div class="group bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 overflow-hidden">
                         <div class="relative aspect-square overflow-hidden">
                             <img :src="relatedProduct.image"
@@ -385,7 +385,7 @@
                         <div class="p-4">
                             <h3 class="font-semibold text-gray-900 mb-2 line-clamp-2" x-text="relatedProduct.name"></h3>
                             <div class="flex items-center justify-between">
-                                <span class="text-lg font-bold text-gray-900" x-text="$store.ui.formatPrice(relatedProduct.price)"></span>
+                                <span class="text-lg font-bold text-gray-900" x-text="relatedProduct.price ? $store.ui.formatPrice(relatedProduct.price) : ''"></span>
                                 <button @click="$store.cart.addItem(relatedProduct)"
                                         class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors">
                                     Add to Cart
@@ -411,7 +411,7 @@
          @keydown.escape.window="closeImageModal()">
         <div class="relative max-w-4xl max-h-full">
             <img :src="productImages[selectedImageIndex]"
-                 :alt="product?.name"
+                 :alt="product?.name || 'Product'"
                  class="max-w-full max-h-full object-contain">
 
             <!-- Navigation -->
