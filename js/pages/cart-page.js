@@ -1,4 +1,4 @@
-// pages/cart-page.js - Shopping Cart Page Logic for GreenLion SPA
+// pages/cart-page.js - CLEANED Shopping Cart Page Logic for GreenLion SPA
 document.addEventListener('alpine:init', () => {
     Alpine.data('cartPage', () => ({
         isLoading: false,
@@ -111,13 +111,12 @@ document.addEventListener('alpine:init', () => {
                     return false;
                 }
 
-                const phoneRegex = /^(\+961|961|0)?[0-9]{8}$/;
-                if (!phoneRegex.test(this.customerDetails.phone.replace(/\s/g, ''))) {
+                if (!this.$store.utils.isValidPhone(this.customerDetails.phone, 'LB')) {
                     this.$store.ui.showNotification('Please enter a valid Lebanese phone number', 'error');
                     return false;
                 }
 
-                if (this.customerDetails.email && !/\S+@\S+\.\S+/.test(this.customerDetails.email)) {
+                if (this.customerDetails.email && !this.$store.utils.isValidEmail(this.customerDetails.email)) {
                     this.$store.ui.showNotification('Please enter a valid email address', 'error');
                     return false;
                 }
@@ -220,10 +219,6 @@ document.addEventListener('alpine:init', () => {
             setTimeout(() => {
                 this.$store.router.navigate('home');
             }, 2000);
-        },
-
-        formatPrice(price) {
-            return this.$store.ui.formatPrice(price);
         },
 
         continueShopping() {

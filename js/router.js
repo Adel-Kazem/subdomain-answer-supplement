@@ -93,14 +93,14 @@ document.addEventListener('alpine:init', () => {
             this.currentParams = {};
 
             if (path[1] === 'category' && path[2]) {
-                this.currentParams.category = this.decodeSlug(path[2]);
-                const categoryName = this.getCategoryNameFromSlug(path[2]);
+                this.currentParams.category = Alpine.store('utils').decodeSlug(path[2]);
+                const categoryName = getCategoryNameFromSlug(path[2]);
                 this.updateDocumentTitle(`${categoryName} - Products | GreenLion`);
             } else if (path[1] === 'search' && path[2]) {
                 this.currentParams.search = decodeURIComponent(path[2]);
                 this.updateDocumentTitle(`Search: "${this.currentParams.search}" - Products | GreenLion`);
             } else if (path[1] === 'brand' && path[2]) {
-                this.currentParams.brand = this.decodeSlug(path[2]);
+                this.currentParams.brand = Alpine.store('utils').decodeSlug(path[2]);
                 this.updateDocumentTitle(`${this.currentParams.brand} Products | GreenLion`);
             } else {
                 this.updateDocumentTitle('All Products | GreenLion Electronics');
@@ -117,7 +117,7 @@ document.addEventListener('alpine:init', () => {
                 const slug = path[1];
                 this.currentParams.slug = slug;
 
-                const product = this.findProductBySlug(slug);
+                const product = getProductBySlug(slug);
                 if (product) {
                     this.currentParams.product = product;
                     this.updateDocumentTitle(`${product.name} | GreenLion Electronics`);
@@ -186,18 +186,18 @@ document.addEventListener('alpine:init', () => {
                     break;
                 case 'products':
                     if (params.category) {
-                        hash += '/category/' + this.encodeSlug(params.category);
+                        hash += '/category/' + Alpine.store('utils').encodeSlug(params.category);
                     } else if (params.search) {
                         hash += '/search/' + encodeURIComponent(params.search);
                     } else if (params.brand) {
-                        hash += '/brand/' + this.encodeSlug(params.brand);
+                        hash += '/brand/' + Alpine.store('utils').encodeSlug(params.brand);
                     }
                     break;
                 case 'product':
                     if (params.slug) {
                         hash += '/' + params.slug;
                     } else if (params.id) {
-                        const product = this.findProductById(params.id);
+                        const product = getProductById(params.id);
                         if (product && product.slug) {
                             hash += '/' + product.slug;
                         } else {
@@ -244,43 +244,6 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
-        // Utility methods
-        findProductBySlug(slug) {
-            if (typeof PRODUCTS !== 'undefined') {
-                return PRODUCTS.find(product => product.slug === slug);
-            }
-            return null;
-        },
-
-        findProductById(id) {
-            if (typeof PRODUCTS !== 'undefined') {
-                return PRODUCTS.find(product => product.id === id);
-            }
-            return null;
-        },
-
-        getCategoryNameFromSlug(slug) {
-            if (typeof CATEGORIES !== 'undefined') {
-                const category = CATEGORIES.find(cat => this.encodeSlug(cat.name) === slug);
-                return category ? category.name : this.decodeSlug(slug);
-            }
-            return this.decodeSlug(slug);
-        },
-
-        encodeSlug(text) {
-            return text
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/^-+|-+$/g, '');
-        },
-
-        decodeSlug(slug) {
-            return slug
-                .split('-')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
-        },
-
         updateDocumentTitle(title) {
             document.title = title;
         },
@@ -313,7 +276,7 @@ document.addEventListener('alpine:init', () => {
         generateCategoryUrl(category) {
             if (category) {
                 const slug = typeof category === 'string' ? category : category.name;
-                return `#products/category/${this.encodeSlug(slug)}`;
+                return `#products/category/${Alpine.store('utils').encodeSlug(slug)}`;
             }
             return '#products';
         },
@@ -333,7 +296,7 @@ document.addEventListener('alpine:init', () => {
                     breadcrumbs.push({ name: 'Products', url: '#products' });
                     if (this.currentParams.category) {
                         breadcrumbs.push({
-                            name: this.decodeSlug(this.currentParams.category),
+                            name: Alpine.store('utils').decodeSlug(this.currentParams.category),
                             url: this.generateCategoryUrl(this.currentParams.category)
                         });
                     } else if (this.currentParams.search) {

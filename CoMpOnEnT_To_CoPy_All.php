@@ -11,17 +11,17 @@ $fileCollections = [
 
     'JavaScript Files' => [
         $baseDirectory . '\js\app.js',
-        $baseDirectory . '\js\cart-page.js',
-        $baseDirectory . '\js\home-page.js',
-        $baseDirectory . '\js\product-page.js',
-//        $baseDirectory . '\js\products-page.js',
+        $baseDirectory . '\js\pages\cart-page.js',
+        $baseDirectory . '\js\pages\home-page.js',
+        $baseDirectory . '\js\pages\product-page.js',
+        $baseDirectory . '\js\pages\products-page.js',
 //        $baseDirectory . '\js\categories.js',
         $baseDirectory . '\js\page-manager.js',
 //        $baseDirectory . '\js\products.js',
-//        $baseDirectory . '\js\router.js',
-        $baseDirectory . '\js\svg-sprites.js',
+        $baseDirectory . '\js\router.js',
+//        $baseDirectory . '\js\svg-sprites.js',
 //        $baseDirectory . '\js\tailwind.config.js',
-//        $baseDirectory . '\js\template-loader.js'
+        $baseDirectory . '\js\template-loader.js'
     ],
 
 //    'Component Templates' => [
@@ -39,7 +39,7 @@ $fileCollections = [
 
     'Main Files' => [
         $baseDirectory . '\index.html',
-        $baseDirectory . '\README.md'
+//        $baseDirectory . '\README.md'
     ]
 ];
 

@@ -27,7 +27,7 @@
             <div class="text-center max-w-3xl mx-auto">
                 <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                     <span x-show="!currentCategory">Our Electronics Collection</span>
-                    <span x-show="currentCategory" x-text="getCategoryName(currentCategory)"></span>
+                    <span x-show="currentCategory" x-text="getCategoryNameFromSlug(currentCategory)"></span>
                     <span x-show="currentSearch">Search Results for "<span x-text="currentSearch"></span>"</span>
                 </h1>
                 <p class="text-xl text-gray-600 font-light leading-relaxed">
@@ -405,10 +405,10 @@
                             <div class="flex items-center justify-between mb-3">
                                 <div class="flex items-center space-x-2">
                   <span class="text-lg font-bold text-gray-900"
-                        x-text="formatPrice(getProductPrice(product))"></span>
+                        x-text="$store.ui.formatPrice(getProductPrice(product))"></span>
                                     <span x-show="product.salePrice && product.base_price && product.base_price !== product.salePrice"
                                           class="text-sm text-gray-500 line-through"
-                                          x-text="formatPrice(product.base_price)"></span>
+                                          x-text="$store.ui.formatPrice(product.base_price)"></span>
                                 </div>
                                 <span x-show="product.salePrice && product.base_price && product.base_price > product.salePrice"
                                       class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded font-medium"
@@ -493,10 +493,10 @@
                                     <div class="md:ml-6 flex flex-col justify-between items-start md:items-end">
                                         <div class="mb-4 text-right">
                                             <div class="text-2xl font-bold text-gray-900"
-                                                 x-text="formatPrice(getProductPrice(product))"></div>
+                                                 x-text="$store.ui.formatPrice(getProductPrice(product))"></div>
                                             <div x-show="product.salePrice && product.base_price && product.base_price !== product.salePrice"
                                                  class="text-gray-500 line-through"
-                                                 x-text="formatPrice(product.base_price)"></div>
+                                                 x-text="$store.ui.formatPrice(product.base_price)"></div>
                                             <div x-show="product.salePrice && product.base_price && product.base_price > product.salePrice"
                                                  class="text-sm text-red-600 font-medium"
                                                  x-text="Math.round(((product.base_price - product.salePrice) / product.base_price) * 100) + '% OFF'"></div>

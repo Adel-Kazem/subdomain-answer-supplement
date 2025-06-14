@@ -1,11 +1,8 @@
-// pages/home-page.js - FIXED Home Page Logic for GreenLion SPA
+// pages/home-page.js - CLEANED Home Page Logic for GreenLion SPA
 document.addEventListener('alpine:init', () => {
     Alpine.data('homePage', () => ({
         featuredProducts: [],
         categories: [],
-
-        // Image Configuration - ADD THIS
-        imageBaseUrl: window.location.origin + '/',
 
         testimonials: [
             {
@@ -45,6 +42,10 @@ document.addEventListener('alpine:init', () => {
             this.loadCategories();
         },
 
+        handleImageError(event) {
+            this.$store.utils.handleImageError(event);
+        },
+
         loadFeaturedProducts() {
             if (typeof PRODUCTS !== 'undefined') {
                 this.featuredProducts = PRODUCTS.slice(0, 8);
@@ -55,21 +56,6 @@ document.addEventListener('alpine:init', () => {
             if (typeof CATEGORIES !== 'undefined') {
                 this.categories = CATEGORIES.slice(0, 6);
             }
-        },
-
-        // ADD THESE IMAGE METHODS
-        getFullImageUrl(imagePath) {
-            if (!imagePath) return this.getPlaceholderImage();
-
-            if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('//')) {
-                return imagePath;
-            }
-
-            return this.imageBaseUrl + imagePath;
-        },
-
-        getPlaceholderImage() {
-            return "data:image/svg+xml;charset=UTF-8,%3Csvg width='400' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' font-size='18' fill='%239ca3af' text-anchor='middle' dy='.3em'%3ENo Image%3C/text%3E%3C/svg%3E";
         },
 
         getProductImage(product) {
@@ -85,22 +71,11 @@ document.addEventListener('alpine:init', () => {
                 imagePath = product.image;
             }
 
-            return this.getFullImageUrl(imagePath);
+            return this.$store.utils.getFullImageUrl(imagePath);
         },
 
         getCategoryImage(category) {
-            return this.getFullImageUrl(category.image);
-        },
-
-        handleImageError(event) {
-            console.warn('Image failed to load:', event.target.src);
-            event.target.src = this.getPlaceholderImage();
-        },
-
-        // ADD PRICE FORMATTING
-        formatPrice(price) {
-            if (!price || isNaN(price)) return '$0.00';
-            return `$${parseFloat(price).toFixed(2)}`;
+            return this.$store.utils.getFullImageUrl(category.image);
         },
 
         getProductPrice(product) {
@@ -108,9 +83,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         scrollToSection(sectionId) {
-            this.$store.ui?.scrollToElement ?
-                this.$store.ui.scrollToElement(sectionId, 80) :
-                document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+            this.$store.ui.scrollToElement(sectionId, 80);
         }
     }));
 });

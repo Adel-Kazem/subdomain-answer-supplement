@@ -109,6 +109,108 @@ window.calculatePriceRange = () => {
 document.addEventListener('alpine:init', () => {
 
     // =========================================================================
+    // UTILITIES STORE - CENTRALIZED UTILITY FUNCTIONS
+    // =========================================================================
+    Alpine.store('utils', {
+        // Image handling
+        imageBaseUrl: window.location.origin + '/',
+
+        getFullImageUrl(imagePath) {
+            if (!imagePath) return this.getPlaceholderImage();
+
+            if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('//')) {
+                return imagePath;
+            }
+
+            return this.imageBaseUrl + imagePath;
+        },
+
+        getPlaceholderImage() {
+            return "data:image/svg+xml;charset=UTF-8,%3Csvg width='400' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' font-size='18' fill='%239ca3af' text-anchor='middle' dy='.3em'%3ENo Image%3C/text%3E%3C/svg%3E";
+        },
+
+        handleImageError(event) {
+            console.warn('Image failed to load:', event.target.src);
+            event.target.src = this.getPlaceholderImage();
+        },
+
+        // Slug utilities
+        encodeSlug(text) {
+            return text
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        },
+
+        decodeSlug(slug) {
+            return slug
+                .split('-')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        },
+
+        // Validation utilities
+        isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        },
+
+        isValidPhone(phone, country = 'LB') {
+            if (country === 'LB') {
+                return /^(\+961|961|0)?[0-9]{8}$/.test(phone.replace(/\s/g, ''));
+            }
+            return phone.length >= 8;
+        },
+
+        // Text utilities
+        truncateText(text, maxLength = 100) {
+            if (!text || text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '...';
+        },
+
+        capitalizeFirst(text) {
+            if (!text) return '';
+            return text.charAt(0).toUpperCase() + text.slice(1);
+        },
+
+        // Array utilities
+        shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        },
+
+        // Local storage utilities
+        setStorage(key, value) {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+            } catch (error) {
+                console.error('Failed to save to localStorage:', error);
+            }
+        },
+
+        getStorage(key) {
+            try {
+                const item = localStorage.getItem(key);
+                return item ? JSON.parse(item) : null;
+            } catch (error) {
+                console.error('Failed to load from localStorage:', error);
+                return null;
+            }
+        },
+
+        removeStorage(key) {
+            try {
+                localStorage.removeItem(key);
+            } catch (error) {
+                console.error('Failed to remove from localStorage:', error);
+            }
+        }
+    });
+
+    // =========================================================================
     // MAIN APP CONTROLLER
     // =========================================================================
     Alpine.data('appController', () => ({
@@ -505,22 +607,13 @@ document.addEventListener('alpine:init', () => {
         },
 
         saveToStorage() {
-            try {
-                localStorage.setItem('greenlion_cart', JSON.stringify(this.items));
-            } catch (error) {
-                console.error('Failed to save cart to localStorage:', error);
-            }
+            Alpine.store('utils').setStorage('greenlion_cart', this.items);
         },
 
         loadFromStorage() {
-            try {
-                const savedCart = localStorage.getItem('greenlion_cart');
-                if (savedCart) {
-                    this.items = JSON.parse(savedCart);
-                }
-            } catch (error) {
-                console.error('Failed to load cart from localStorage:', error);
-                this.items = [];
+            const savedCart = Alpine.store('utils').getStorage('greenlion_cart');
+            if (savedCart) {
+                this.items = savedCart;
             }
         },
 
@@ -657,22 +750,13 @@ document.addEventListener('alpine:init', () => {
         },
 
         saveToStorage() {
-            try {
-                localStorage.setItem('greenlion_wishlist', JSON.stringify(this.items));
-            } catch (error) {
-                console.error('Failed to save wishlist to localStorage:', error);
-            }
+            Alpine.store('utils').setStorage('greenlion_wishlist', this.items);
         },
 
         loadFromStorage() {
-            try {
-                const savedWishlist = localStorage.getItem('greenlion_wishlist');
-                if (savedWishlist) {
-                    this.items = JSON.parse(savedWishlist);
-                }
-            } catch (error) {
-                console.error('Failed to load wishlist from localStorage:', error);
-                this.items = [];
+            const savedWishlist = Alpine.store('utils').getStorage('greenlion_wishlist');
+            if (savedWishlist) {
+                this.items = savedWishlist;
             }
         }
     });

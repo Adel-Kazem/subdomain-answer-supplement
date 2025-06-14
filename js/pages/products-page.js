@@ -1,4 +1,4 @@
-// pages/products-page.js - Enhanced Products Page Logic for GreenLion SPA
+// pages/products-page.js - CLEANED Enhanced Products Page Logic for GreenLion SPA
 document.addEventListener('alpine:init', () => {
     Alpine.data('productsPage', () => ({
         // Core data
@@ -55,7 +55,7 @@ document.addEventListener('alpine:init', () => {
         init() {
             this.loadProducts();
             this.loadCategories();
-            this.extractBrands();
+            this.loadBrands();
             this.watchRouteParams();
             this.loadViewPreference();
             this.applyInitialFilters();
@@ -71,7 +71,9 @@ document.addEventListener('alpine:init', () => {
 
         loadProducts() {
             this.isLoading = true;
-            setTimeout(() => {
+
+            // For instant data, use immediate check
+            this.$nextTick(() => {
                 if (typeof PRODUCTS !== 'undefined') {
                     this.products = [...PRODUCTS];
                     this.calculatePriceRange();
@@ -80,14 +82,13 @@ document.addEventListener('alpine:init', () => {
                     console.warn('PRODUCTS data not available');
                 }
                 this.isLoading = false;
-            }, 300);
+            });
         },
 
         loadCategories() {
             if (typeof CATEGORIES !== 'undefined') {
                 this.categories = [...CATEGORIES];
             } else {
-                // Create default categories if not available
                 this.categories = [
                     { id: 1, name: 'Mobile Accessories', slug: 'mobile-accessories', parent_id: null },
                     { id: 2, name: 'Smart Gadgets', slug: 'smart-gadgets', parent_id: null },
@@ -97,25 +98,16 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
-        extractBrands() {
-            const brandSet = new Set(['GreenLion']); // Default brand
-            this.products.forEach(product => {
-                if (product.brand) {
-                    brandSet.add(product.brand);
-                }
-            });
-            this.brands = Array.from(brandSet).sort();
+        loadBrands() {
+            this.brands = extractBrands();
         },
 
         calculatePriceRange() {
             if (this.products.length > 0) {
-                const prices = this.products.map(p => this.getProductPrice(p));
-                const minPrice = Math.floor(Math.min(...prices));
-                const maxPrice = Math.ceil(Math.max(...prices));
-
+                const priceRange = calculatePriceRange();
                 this.selectedPriceRange = {
-                    min: minPrice,
-                    max: maxPrice
+                    min: priceRange.min,
+                    max: priceRange.max
                 };
             }
         },
@@ -125,14 +117,14 @@ document.addEventListener('alpine:init', () => {
         },
 
         loadViewPreference() {
-            const savedView = localStorage.getItem('greenlion_product_view');
+            const savedView = this.$store.utils.getStorage('greenlion_product_view');
             if (savedView && ['grid', 'list'].includes(savedView)) {
                 this.viewMode = savedView;
             }
         },
 
         saveViewPreference() {
-            localStorage.setItem('greenlion_product_view', this.viewMode);
+            this.$store.utils.setStorage('greenlion_product_view', this.viewMode);
         },
 
         updatePageTitle() {
@@ -140,7 +132,7 @@ document.addEventListener('alpine:init', () => {
             let title = 'Shop Electronics';
 
             if (params.category) {
-                const category = this.getCategoryBySlug(params.category);
+                const category = getCategoryBySlug(params.category);
                 title = category ? category.name : 'Products';
             } else if (params.search) {
                 title = `Search Results for "${params.search}"`;
@@ -199,43 +191,13 @@ document.addEventListener('alpine:init', () => {
             this.filterProducts();
         },
 
-        // Category management
-        getCategoryBySlug(slug) {
-            return this.categories.find(cat => cat.slug === slug);
-        },
-
-        getCategoryById(id) {
-            return this.categories.find(cat => cat.id === id);
-        },
-
-        getCategoryName(categorySlug) {
-            if (!categorySlug) return 'All Products';
-            const category = this.getCategoryBySlug(categorySlug);
-            return category ? category.name : 'Products';
-        },
-
-        getAllDescendantCategoryIds(parentId) {
-            let ids = [];
-            this.categories.forEach(cat => {
-                if (cat.parent_id === parentId) {
-                    ids.push(cat.id);
-                    ids = ids.concat(this.getAllDescendantCategoryIds(cat.id));
-                }
-            });
-            return ids;
-        },
-
-        getParentCategories() {
-            return this.categories.filter(cat => cat.parent_id === null);
-        },
-
         // Product filtering logic
         filterProducts() {
             let filtered = [...this.products];
 
             // Category filter
             if (this.currentCategory) {
-                const category = this.getCategoryBySlug(this.currentCategory);
+                const category = getCategoryBySlug(this.currentCategory);
                 if (category) {
                     const categoryIdsToCheck = [
                         category.id,
@@ -243,14 +205,12 @@ document.addEventListener('alpine:init', () => {
                     ];
 
                     filtered = filtered.filter(product => {
-                        // Check if product has categories array
                         if (Array.isArray(product.categories)) {
                             return product.categories.some(catId => categoryIdsToCheck.includes(catId));
                         }
 
-                        // Fallback: check category string
                         if (product.category) {
-                            const productCategorySlug = this.$store.router.encodeSlug(product.category);
+                            const productCategorySlug = this.$store.utils.encodeSlug(product.category);
                             return categoryIdsToCheck.includes(category.id) ||
                                 productCategorySlug === this.currentCategory ||
                                 product.category.toLowerCase() === category.name.toLowerCase();
@@ -361,7 +321,6 @@ document.addEventListener('alpine:init', () => {
 
                     case 'featured':
                     default:
-                        // Featured sorting: featured > new > sale > regular
                         const aScore = (a.isFeatured ? 1000 : 0) + (a.isNew ? 100 : 0) + (a.isOnSale ? 10 : 0);
                         const bScore = (b.isFeatured ? 1000 : 0) + (b.isNew ? 100 : 0) + (b.isOnSale ? 10 : 0);
                         return bScore - aScore;
@@ -369,6 +328,21 @@ document.addEventListener('alpine:init', () => {
             });
 
             this.filteredProducts = products;
+        },
+
+        getAllDescendantCategoryIds(parentId) {
+            let ids = [];
+            this.categories.forEach(cat => {
+                if (cat.parent_id === parentId) {
+                    ids.push(cat.id);
+                    ids = ids.concat(this.getAllDescendantCategoryIds(cat.id));
+                }
+            });
+            return ids;
+        },
+
+        getParentCategories() {
+            return this.categories.filter(cat => cat.parent_id === null);
         },
 
         // Pagination
@@ -490,7 +464,6 @@ document.addEventListener('alpine:init', () => {
             if (this.priceRanges.length > 0) params.price = this.priceRanges.join(',');
             if (this.sortBy !== 'featured') params.sort = this.sortBy;
 
-            // Add status filters
             const statusFilters = [];
             if (this.showNew) statusFilters.push('new');
             if (this.showSale) statusFilters.push('sale');
@@ -514,17 +487,11 @@ document.addEventListener('alpine:init', () => {
         addToCart(product, event) {
             event?.stopPropagation();
             this.$store.cart.addItem(product);
-            this.$store.ui.showNotification('Product added to cart!', 'success');
         },
 
         toggleWishlist(product, event) {
             event?.stopPropagation();
             this.$store.wishlist.toggleItem(product);
-            const isInWishlist = this.$store.wishlist.isInWishlist(product.id);
-            this.$store.ui.showNotification(
-                isInWishlist ? 'Added to wishlist!' : 'Removed from wishlist!',
-                'success'
-            );
         },
 
         viewProduct(product, event) {
@@ -555,10 +522,6 @@ document.addEventListener('alpine:init', () => {
             return this.getProductStock(product) > 0;
         },
 
-        formatPrice(price) {
-            return '$' + parseFloat(price || 0).toFixed(2);
-        },
-
         hasActiveFilters() {
             return !!(
                 this.currentCategory ||
@@ -583,26 +546,18 @@ document.addEventListener('alpine:init', () => {
             return count;
         },
 
-        // Quick actions
         quickFilterByCategory(categorySlug) {
             this.selectCategory(categorySlug);
         },
 
-        // Newsletter subscription
         subscribeToNewsletter() {
             const email = this.$refs.newsletterEmail?.value;
-            if (email && this.isValidEmail(email)) {
-                // Here you would integrate with your newsletter service
+            if (email && this.$store.utils.isValidEmail(email)) {
                 this.$store.ui.showNotification('Thank you for subscribing!', 'success');
                 this.$refs.newsletterEmail.value = '';
             } else {
                 this.$store.ui.showNotification('Please enter a valid email address.', 'error');
             }
-        },
-
-        isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
         }
     }));
 });

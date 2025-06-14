@@ -1,4 +1,4 @@
-// pages/product-page.js - Enhanced Product Detail Page Logic for GreenLion SPA
+// pages/product-page.js - CLEANED Product Detail Page Logic for GreenLion SPA
 document.addEventListener('alpine:init', () => {
     Alpine.data('productPage', () => ({
         // Core Product Data
@@ -15,9 +15,6 @@ document.addEventListener('alpine:init', () => {
         activeTab: 'description',
         isLoading: true,
         error: null,
-
-        // Image Configuration
-        imageBaseUrl: window.location.origin + '/',
 
         // Image Viewer Properties
         isScrollLeftEnd: true,
@@ -167,43 +164,28 @@ document.addEventListener('alpine:init', () => {
             this.reviews = this.sampleReviews;
         },
 
-        // Image URL Handling
-        getFullImageUrl(imagePath) {
-            if (!imagePath) return this.getPlaceholderImage();
-
-            if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('//')) {
-                return imagePath;
-            }
-
-            return this.imageBaseUrl + imagePath;
-        },
-
-        getPlaceholderImage() {
-            return "https://via.placeholder.com/400x300/f3f4f6/9ca3af?text=Product+Image";
-        },
-
         // Product Images Management
         get productImages() {
-            if (!this.product) return [this.getPlaceholderImage()];
+            if (!this.product) return [this.$store.utils.getPlaceholderImage()];
 
             let images = [];
 
             if (this.product.images) {
                 if (Array.isArray(this.product.images)) {
-                    images.push(...this.product.images.map(img => this.getFullImageUrl(img)));
+                    images.push(...this.product.images.map(img => this.$store.utils.getFullImageUrl(img)));
                 } else {
-                    images.push(this.getFullImageUrl(this.product.images));
+                    images.push(this.$store.utils.getFullImageUrl(this.product.images));
                 }
             } else if (this.product.image) {
-                images.push(this.getFullImageUrl(this.product.image));
+                images.push(this.$store.utils.getFullImageUrl(this.product.image));
             }
 
             if (this.product.gallery && Array.isArray(this.product.gallery)) {
-                images.push(...this.product.gallery.map(img => this.getFullImageUrl(img)));
+                images.push(...this.product.gallery.map(img => this.$store.utils.getFullImageUrl(img)));
             }
 
             if (images.length === 0) {
-                images.push(this.getPlaceholderImage());
+                images.push(this.$store.utils.getPlaceholderImage());
             }
 
             return images;
@@ -222,7 +204,7 @@ document.addEventListener('alpine:init', () => {
                 if (img) {
                     thumbnails.push({
                         type: 'main',
-                        image: this.getFullImageUrl(img),
+                        image: this.$store.utils.getFullImageUrl(img),
                         key: img
                     });
                 }
@@ -236,7 +218,7 @@ document.addEventListener('alpine:init', () => {
                             images.forEach(img => {
                                 thumbnails.push({
                                     type: 'option',
-                                    image: this.getFullImageUrl(img),
+                                    image: this.$store.utils.getFullImageUrl(img),
                                     key: `${optionName}-${optionValue}`,
                                     optionName,
                                     optionValue
@@ -254,7 +236,7 @@ document.addEventListener('alpine:init', () => {
                         variantImage.forEach(img => {
                             thumbnails.push({
                                 type: 'variant',
-                                image: this.getFullImageUrl(img),
+                                image: this.$store.utils.getFullImageUrl(img),
                                 key: variantKey,
                                 variantKey
                             });
@@ -262,7 +244,7 @@ document.addEventListener('alpine:init', () => {
                     } else if (variantImage) {
                         thumbnails.push({
                             type: 'variant',
-                            image: this.getFullImageUrl(variantImage),
+                            image: this.$store.utils.getFullImageUrl(variantImage),
                             key: variantKey,
                             variantKey
                         });
@@ -289,19 +271,18 @@ document.addEventListener('alpine:init', () => {
         },
 
         getSelectedImage() {
-            if (!this.product) return this.getPlaceholderImage();
+            if (!this.product) return this.$store.utils.getPlaceholderImage();
 
             try {
-                // ✅ FIXED: Always process through getFullImageUrl()
                 if (this.selectedImage && this.selectedImage !== '') {
-                    return this.getFullImageUrl(this.selectedImage);
+                    return this.$store.utils.getFullImageUrl(this.selectedImage);
                 }
 
                 const variantKey = this.getVariantKey();
                 if (variantKey && this.product.variant_images && this.product.variant_images[variantKey]) {
                     const variantImage = this.product.variant_images[variantKey];
                     const imageUrl = Array.isArray(variantImage) ? variantImage[0] : variantImage;
-                    return this.getFullImageUrl(imageUrl);
+                    return this.$store.utils.getFullImageUrl(imageUrl);
                 }
 
                 if (this.product.option_images && this.selectedOptions) {
@@ -310,7 +291,7 @@ document.addEventListener('alpine:init', () => {
                             this.product.option_images[option][value] &&
                             Array.isArray(this.product.option_images[option][value]) &&
                             this.product.option_images[option][value].length > 0) {
-                            return this.getFullImageUrl(this.product.option_images[option][value][0]);
+                            return this.$store.utils.getFullImageUrl(this.product.option_images[option][value][0]);
                         }
                     }
                 }
@@ -320,10 +301,10 @@ document.addEventListener('alpine:init', () => {
                     return mainImages[0];
                 }
 
-                return this.getPlaceholderImage();
+                return this.$store.utils.getPlaceholderImage();
             } catch (error) {
                 console.error("Error in getSelectedImage:", error);
-                return this.getPlaceholderImage();
+                return this.$store.utils.getPlaceholderImage();
             }
         },
 
@@ -341,7 +322,7 @@ document.addEventListener('alpine:init', () => {
             for (const [optionName, optionValues] of Object.entries(this.product.option_images)) {
                 for (const [optionValue, images] of Object.entries(optionValues)) {
                     if (Array.isArray(images)) {
-                        const fullImageUrls = images.map(img => this.getFullImageUrl(img));
+                        const fullImageUrls = images.map(img => this.$store.utils.getFullImageUrl(img));
                         if (fullImageUrls.includes(selectedImage)) {
                             this.selectOption(optionName, optionValue);
                             return;
@@ -353,8 +334,8 @@ document.addEventListener('alpine:init', () => {
             if (this.product?.variant_images) {
                 for (const [variantKey, variantImage] of Object.entries(this.product.variant_images)) {
                     const fullUrls = Array.isArray(variantImage) ?
-                        variantImage.map(img => this.getFullImageUrl(img)) :
-                        [this.getFullImageUrl(variantImage)];
+                        variantImage.map(img => this.$store.utils.getFullImageUrl(img)) :
+                        [this.$store.utils.getFullImageUrl(variantImage)];
 
                     if (fullUrls.includes(selectedImage)) {
                         this.selectVariantFromKey(variantKey);
@@ -642,7 +623,7 @@ document.addEventListener('alpine:init', () => {
                 message += ` (Quantity: ${this.quantity})`;
             }
 
-            message += `\nPrice: ${this.formatPrice(this.finalPrice)}`;
+            message += `\nPrice: ${this.$store.ui.formatPrice(this.finalPrice)}`;
 
             if (this.selectedOptions && Object.keys(this.selectedOptions).length > 0) {
                 message += '\nSelected options:';
@@ -652,13 +633,13 @@ document.addEventListener('alpine:init', () => {
             }
 
             const shippingCost = this.getVariantShippingCost();
-            message += `\nShipping: ${shippingCost === 0 ? 'Free' : this.formatPrice(shippingCost)}`;
+            message += `\nShipping: ${shippingCost === 0 ? 'Free' : this.$store.ui.formatPrice(shippingCost)}`;
 
             const stock = this.getVariantStock();
             message += `\nStock: ${stock > 0 ? `${stock} available` : 'Out of stock'}`;
 
             if (this.totalPrice !== this.finalPrice) {
-                message += `\nTotal: ${this.formatPrice(this.totalPrice)}`;
+                message += `\nTotal: ${this.$store.ui.formatPrice(this.totalPrice)}`;
             }
 
             message += '\n\nCould you provide me with more information about this product?';
@@ -857,12 +838,6 @@ document.addEventListener('alpine:init', () => {
             this.minPanY = -this.maxPanY;
         },
 
-        // Error Handling
-        handleImageError(event) {
-            console.warn('Image failed to load:', event.target.src);
-            event.target.src = this.getPlaceholderImage();
-        },
-
         // Reviews
         get averageRating() {
             if (this.reviews.length === 0) return 0;
@@ -899,17 +874,13 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
-        // Utility Functions
-        formatPrice(price) {
-            return this.$store.ui?.formatPrice ? this.$store.ui.formatPrice(price) : `$${price.toFixed(2)}`;
-        },
-
+        // Utility Functions - Using centralized utilities
         formatOptionName(name) {
-            return name.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+            return this.$store.utils.capitalizeFirst(name.replace(/_/g, ' '));
         },
 
         formatFeatureKey(key) {
-            return key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+            return this.$store.utils.capitalizeFirst(key.replace(/_/g, ' '));
         }
     }));
 });
