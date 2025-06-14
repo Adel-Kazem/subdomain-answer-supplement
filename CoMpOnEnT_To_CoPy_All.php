@@ -1,72 +1,185 @@
 <?php
 // Configuration
-//$componentsDirectory = 'js'; // Relative path within the repository
-$componentsDirectory = 'C:\xampp\htdocs\subdomain-answer-supplement\js'; // Relative path within the repository
+$baseDirectory = 'C:\xampp\htdocs\subdomain-answer-supplement';
 $outputFile = 'Components_content.txt';
 
-// Files to exclude
+// Define file collections by category
+$fileCollections = [
+//    'CSS Files' => [
+//        $baseDirectory . '\css\styles.css'
+//    ],
+
+    'JavaScript Files' => [
+        $baseDirectory . '\js\app.js',
+        $baseDirectory . '\js\cart-page.js',
+        $baseDirectory . '\js\home-page.js',
+        $baseDirectory . '\js\product-page.js',
+//        $baseDirectory . '\js\products-page.js',
+//        $baseDirectory . '\js\categories.js',
+        $baseDirectory . '\js\page-manager.js',
+//        $baseDirectory . '\js\products.js',
+//        $baseDirectory . '\js\router.js',
+        $baseDirectory . '\js\svg-sprites.js',
+//        $baseDirectory . '\js\tailwind.config.js',
+//        $baseDirectory . '\js\template-loader.js'
+    ],
+
+//    'Component Templates' => [
+//        $baseDirectory . '\templates\components\floating-buttons.html',
+//        $baseDirectory . '\templates\components\footer.html',
+//        $baseDirectory . '\templates\components\navigation.html'
+//    ],
+
+    'Page Templates' => [
+        $baseDirectory . '\templates\pages\cart-page.html',
+        $baseDirectory . '\templates\pages\home-page.html',
+        $baseDirectory . '\templates\pages\product-page.html',
+        $baseDirectory . '\templates\pages\products-page.html'
+    ],
+
+    'Main Files' => [
+        $baseDirectory . '\index.html',
+        $baseDirectory . '\README.md'
+    ]
+];
+
+// Files to exclude (if any)
 $excludeFiles = [
-    'products-page.js',
-    'product-page.js',
-    'tailwind.config.js',
-//    'categories.js',
-    // Add more files to exclude as needed
+    // Add specific files to exclude if needed
+    // 'filename.js',
 ];
-
-// Get all JS files in the directory
-$componentPaths = glob($componentsDirectory . '/*.js');
-
-// Filter out excluded files
-$filteredComponentPaths = array_filter($componentPaths, function($path) use ($excludeFiles) {
-    $filename = basename($path);
-    return !in_array($filename, $excludeFiles);
-});
-
-// Add additional files manually
-$additionalFiles = [
-    'C:\xampp\htdocs\subdomain-answer-supplement\pages\product.html',
-    'C:\xampp\htdocs\subdomain-answer-supplement\pages\home.html',
-    'C:\xampp\htdocs\subdomain-answer-supplement\pages\products.html',
-//    'C:\xampp\htdocs\subdomain-answer-supplement\index.html',
-];
-
-
-// Merge files into one array
-$allFiles = array_merge($filteredComponentPaths, $additionalFiles);
 
 // Initialize content string
 $finalContent = '';
+$totalFilesProcessed = 0;
 
-// Process each file
-foreach ($allFiles as $index => $targetFile) {
-    // Read the content of the target file
-    $content = file_get_contents($targetFile);
+// Process each category
+foreach ($fileCollections as $categoryName => $files) {
+    // Add category header
+    $finalContent .= str_repeat('=', 80) . "\n";
+    $finalContent .= strtoupper($categoryName) . "\n";
+    $finalContent .= str_repeat('=', 80) . "\n\n";
 
-    if ($content === false) {
-        echo "Error: Unable to read the file {$targetFile}\n";
+    foreach ($files as $filePath) {
+        // Skip if file should be excluded
+        $filename = basename($filePath);
+        if (in_array($filename, $excludeFiles)) {
+            continue;
+        }
+
+        // Check if file exists
+        if (!file_exists($filePath)) {
+            echo "Warning: File not found - {$filePath}\n";
+            continue;
+        }
+
+        // Read file content
+        $content = file_get_contents($filePath);
+
+        if ($content === false) {
+            echo "Error: Unable to read file - {$filePath}\n";
+            continue;
+        }
+
+        // Add file header and content
+        $finalContent .= str_repeat('-', 60) . "\n";
+        $finalContent .= "File: " . basename($filePath) . "\n";
+        $finalContent .= "Path: {$filePath}\n";
+        $finalContent .= "Size: " . strlen($content) . " bytes\n";
+        $finalContent .= str_repeat('-', 60) . "\n\n";
+        $finalContent .= $content . "\n\n";
+
+        $totalFilesProcessed++;
+    }
+
+    // Add spacing between categories
+    $finalContent .= "\n\n";
+}
+
+// Alternative method: Auto-discover files by extension
+function autoDiscoverFiles($baseDir, $extensions = ['js', 'html', 'css', 'md']) {
+    $discoveredFiles = [];
+
+    foreach ($extensions as $ext) {
+        // Search recursively for files with specific extensions
+        $pattern = $baseDir . '\**\*.' . $ext;
+        $files = glob($pattern, GLOB_BRACE);
+
+        // Also search in root directory
+        $rootFiles = glob($baseDir . '\*.' . $ext);
+        $files = array_merge($files, $rootFiles);
+
+        $discoveredFiles = array_merge($discoveredFiles, $files);
+    }
+
+    return array_unique($discoveredFiles);
+}
+
+// Uncomment the following section if you want to auto-discover files instead
+/*
+echo "Auto-discovering files...\n";
+$autoDiscoveredFiles = autoDiscoverFiles($baseDirectory);
+$finalContent .= str_repeat('=', 80) . "\n";
+$finalContent .= "AUTO-DISCOVERED FILES\n";
+$finalContent .= str_repeat('=', 80) . "\n\n";
+
+foreach ($autoDiscoveredFiles as $filePath) {
+    $filename = basename($filePath);
+    if (in_array($filename, $excludeFiles)) {
         continue;
     }
 
-    // Add file path header
-    $fileContent = "File Path: {$targetFile}\n\n" . $content;
-
-    // Add to final content with separator (except for the first file)
-    if ($index > 0) {
-        $finalContent .= "\n\n\n\n\n\n"; // 6 new lines as separator
+    $content = file_get_contents($filePath);
+    if ($content !== false) {
+        $finalContent .= str_repeat('-', 60) . "\n";
+        $finalContent .= "File: {$filename}\n";
+        $finalContent .= "Path: {$filePath}\n";
+        $finalContent .= str_repeat('-', 60) . "\n\n";
+        $finalContent .= $content . "\n\n";
+        $totalFilesProcessed++;
     }
-
-    $finalContent .= $fileContent;
 }
+*/
 
-// Write the combined content to the output file
+// Write the combined content to output file
 if (!empty($finalContent)) {
     $result = file_put_contents($outputFile, $finalContent);
 
     if ($result === false) {
-        echo "Error: Unable to write to the file {$outputFile}\n";
+        echo "Error: Unable to write to {$outputFile}\n";
     } else {
-        echo "Successfully copied the content of " . count($allFiles) . " files to {$outputFile}\n";
+        echo "✅ Successfully processed {$totalFilesProcessed} files\n";
+        echo "📄 Content saved to: {$outputFile}\n";
+        echo "📊 Total size: " . number_format(strlen($finalContent)) . " characters\n";
+
+        // Show summary by category
+        echo "\n📋 Files processed by category:\n";
+        foreach ($fileCollections as $categoryName => $files) {
+            $categoryCount = count(array_filter($files, function($file) use ($excludeFiles) {
+                return file_exists($file) && !in_array(basename($file), $excludeFiles);
+            }));
+            echo "   • {$categoryName}: {$categoryCount} files\n";
+        }
     }
 } else {
-    echo "Error: No content was retrieved from the files\n";
+    echo "❌ Error: No content was retrieved from the files\n";
 }
+
+// Optional: Create a file index
+$indexContent = "FILE INDEX - Generated on " . date('Y-m-d H:i:s') . "\n";
+$indexContent .= str_repeat('=', 50) . "\n\n";
+
+foreach ($fileCollections as $categoryName => $files) {
+    $indexContent .= "{$categoryName}:\n";
+    foreach ($files as $file) {
+        if (file_exists($file) && !in_array(basename($file), $excludeFiles)) {
+            $size = filesize($file);
+            $indexContent .= "  • " . basename($file) . " ({$size} bytes)\n";
+        }
+    }
+    $indexContent .= "\n";
+}
+
+file_put_contents('File_Index.txt', $indexContent);
+echo "📑 File index created: File_Index.txt\n";
+?>
