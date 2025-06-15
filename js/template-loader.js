@@ -1,4 +1,3 @@
-// template-loader.js - Template Loading System for GreenLion SPA
 class TemplateLoader {
     constructor() {
         this.cache = new Map();
