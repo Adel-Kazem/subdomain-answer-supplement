@@ -125,7 +125,7 @@ document.addEventListener('alpine:init', () => {
 
         updatePageMeta() {
             if (this.product) {
-                document.title = `${this.product.name} - GreenLion`;
+                SEOManager.setProductSEO(this.product);
             }
         },
 

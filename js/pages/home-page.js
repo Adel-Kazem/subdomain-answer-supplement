@@ -37,9 +37,23 @@ document.addEventListener('alpine:init', () => {
             { label: "Countries Served", value: "5+", icon: "icon-location" }
         ],
 
-        init() {
+        async init() {
+            await this.$nextTick();
+
             this.loadFeaturedProducts();
             this.loadCategories();
+
+            // Set homepage SEO with a small delay to ensure everything is loaded
+            setTimeout(() => {
+                if (typeof SEOManager !== 'undefined') {
+                    SEOManager.setHomeSEO({
+                        name: "GreenLion - Premium Consumer Electronics & Smart Gadgets in Lebanon",
+                        description: "Discover cutting-edge technology and smart gadgets that enhance your digital lifestyle. From wireless chargers to smart home devices, we bring innovation to Lebanon.",
+                        logo: "/images/logo.jpg",
+                        url: window.location.origin
+                    });
+                }
+            }, 100);
         },
 
         handleImageError(event) {

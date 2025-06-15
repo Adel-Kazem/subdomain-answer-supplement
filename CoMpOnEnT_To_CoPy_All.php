@@ -31,7 +31,7 @@ $fileCollections = [
 //    ],
 
     'Page Templates' => [
-        $baseDirectory . '\templates\pages\cart-page.html',
+//        $baseDirectory . '\templates\pages\cart-page.html',
         $baseDirectory . '\templates\pages\home-page.html',
         $baseDirectory . '\templates\pages\product-page.html',
         $baseDirectory . '\templates\pages\products-page.html'
