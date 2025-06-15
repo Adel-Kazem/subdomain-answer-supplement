@@ -1,32 +1,34 @@
-// seo.js - Simple SEO Management (Your Original Idea)
+// seo.js - Fixed version with proper title handling
 
 window.SEOManager = {
 
-    // Main function to set page SEO - SIMPLE!
-    setPageSEO: function(metaTagsHTML = '', jsonLdData = null) {
+    // Main function to set page SEO
+    setPageSEO: function(metaTagsHTML = '', jsonLdData = null, pageTitle = '') {
         const container = document.getElementById('dynamic-seo-container');
         if (!container) {
-            console.warn('SEO container not found. Add <script type="seo-container" id="dynamic-seo-container"></script> to your <head>');
+            console.warn('SEO container not found.');
             return;
         }
 
-        // SIMPLE: Clear everything at once (your original idea!)
+        // HANDLE TITLE SEPARATELY (not in container)
+        if (pageTitle) {
+            document.title = pageTitle;  // Direct assignment to document.title
+        }
+
+        // Clear container content
         container.innerHTML = '';
 
-        // Build complete HTML content
+        // Build HTML content (WITHOUT title tag)
         let fullHTML = '';
 
-        // Add meta tags
         if (metaTagsHTML) {
             fullHTML += metaTagsHTML;
         }
 
-        // Add JSON-LD
         if (jsonLdData) {
             fullHTML += `<script type="application/ld+json">${JSON.stringify(jsonLdData, null, 2)}</script>`;
         }
 
-        // SIMPLE: Set all content at once
         container.innerHTML = fullHTML;
     },
 
@@ -37,8 +39,9 @@ window.SEOManager = {
             return;
         }
 
+        const pageTitle = `${product.name} - ${product.brand || 'Store'}`;
+
         const metaHTML = `
-            <title>${product.name} - ${product.brand || 'Store'}</title>
             <meta name="description" content="${product.description}">
             <meta property="og:title" content="${product.name}">
             <meta property="og:description" content="${product.description}">
@@ -63,7 +66,7 @@ window.SEOManager = {
             }
         };
 
-        this.setPageSEO(metaHTML, jsonLd);
+        this.setPageSEO(metaHTML, jsonLd, pageTitle);  // Pass title separately
     },
 
     // Helper to generate homepage SEO
@@ -73,8 +76,9 @@ window.SEOManager = {
             return;
         }
 
+        const pageTitle = storeInfo.name;
+
         const metaHTML = `
-            <title>${storeInfo.name}</title>
             <meta name="description" content="${storeInfo.description}">
             <meta property="og:title" content="${storeInfo.name}">
             <meta property="og:description" content="${storeInfo.description}">
@@ -90,6 +94,6 @@ window.SEOManager = {
             "url": storeInfo.url
         };
 
-        this.setPageSEO(metaHTML, jsonLd);
+        this.setPageSEO(metaHTML, jsonLd, pageTitle);  // Pass title separately
     }
 };
